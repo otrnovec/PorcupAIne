@@ -3,8 +3,10 @@ import random
 # Vygenerování seznamu náhodných čísel od 0 do 99. Velikost seznamu může být mezi 15 a 30 čísli. Použití bubble sort algoritmu k seřazení seznamu sestupně.
 
 num_count = random.randint(15, 30)  # Definujeme náhodně velikost seznamu.
+
 # Plníme pozice v seznamu náhodně generovanými čísly a definujeme tak proměnnou random_number jako náš seznam.
 random_numbers = [random.randint(0, 99) for _ in range(num_count)] # Náhodné číslo mezi 0 a 99 pro každou pozici v seznamu.
+
 print("Original List:", random_numbers)
 
 # Definice algoritmu Bubble sort.
