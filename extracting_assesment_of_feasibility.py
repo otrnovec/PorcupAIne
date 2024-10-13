@@ -31,6 +31,7 @@ def extract_assesment_of_feasibility(url_df):
             #count to check what part of the assesment we are in currently,
             #it's not specified in xml
             count = 0
+            #there can be multiple assesments for one project
             for td in assesment_xml:
                 if len(td.text) > 0:
                     assesment_list.append(td.text)
