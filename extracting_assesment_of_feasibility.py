@@ -28,15 +28,15 @@ def extract_assesment_of_feasibility(url_df):
             assesment_xml = soup.find("div", {"id": "project-block-reaction"})
             assesment_xml = assesment_xml.find("tbody")
             assesment_xml = assesment_xml.find_all("td")
-            #count to check what part of the assesment we are in currently,
-            #it's not specified in xml
+            # count to check what part of the assesment we are in currently,
+            # it's not specified in xml
             count = 0
-            #there can be multiple assesments for one project
+            # there can be multiple assesments for one project
             for td in assesment_xml:
                 if len(td.text) > 0:
                     assesment_list.append(td.text)
-                #sometimes "Odůvodnění" part of assesment is missing
-                #so we need to add "EMPTY" to list
+                # sometimes "Odůvodnění" part of assesment is missing
+                # so we need to add "EMPTY" to list
                 else:
                     assesment_list.append("EMPTY")
 
@@ -66,7 +66,7 @@ def save_to_csv(list_of_lists):
     output_df.to_csv("assesment_of_feasibility.csv", sep=",", encoding="utf-8")
 
 
-# #convert csv to df
+# convert csv to df
 df = pd.read_csv("data\ProjektyPARO_5358953113614861487.csv")
 
 # extract the url list
