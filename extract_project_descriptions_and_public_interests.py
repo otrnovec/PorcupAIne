@@ -2,15 +2,16 @@
 public interests from xml and save them to a csv file. """
 import time
 import re
+
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 
 
 def extract_project_description_and_public_interest(url_df):
-    """Function to extract project description and public interest from the xml."""
+    """Extract project description and public interest from the PARO xml"""
 
-    #initialize lists
+    # initialize lists
     list_of_project_ids = []
     list_of_project_descriptions = []
     list_of_public_interest = []
@@ -48,8 +49,7 @@ def extract_project_description_and_public_interest(url_df):
 
     return list_of_project_ids, list_of_project_descriptions, list_of_public_interest
 
-
-def save_to_csv(list_of_project_ids, list_of_project_descriptions, list_of_public_interest):
+def save_to_csv(list_of_project_ids, list_of_project_descriptions, list_of_public_interest, output_file):
     """Function to save the lists to a csv file."""
     #convert lists to dataframe
     output_df = pd.DataFrame(
@@ -59,17 +59,18 @@ def save_to_csv(list_of_project_ids, list_of_project_descriptions, list_of_publi
         })
     
     #save the dataframe to a csv file
-    output_df.to_csv('descriptions_and_interests.csv', sep=',', encoding='utf-8')
+    output_df.to_csv(output_file, sep=',', encoding='utf-8')
 
 
-#convert csv to df
-df = pd.read_csv("data\ProjektyPARO_5358953113614861487.csv")
 
-#extract the url list
-url_list = df["properties.detail"]
+if __name__ == '__main__':
+    #convert csv to df
+    df = pd.read_csv("data\\ProjektyPARO_5358953113614861487.csv")
 
-#call the extract function
-lists = extract_project_description_and_public_interest(url_list)
+    #extract the url list
+    url_list = df["properties.detail"]
 
-#call the save function
-save_to_csv(lists[0], lists[1], lists[2])
+    #call the extract function
+    id_description_interest = extract_project_description_and_public_interest(url_list)
+
+    save_to_csv(id_description_interest[0], id_description_interest[1], id_description_interest[2], 'descriptions_and_interests.csv')
