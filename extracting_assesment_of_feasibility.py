@@ -68,10 +68,9 @@ def save_to_csv(list_of_lists):
 
 
 # convert csv to df
-df = pd.read_csv("data\ProjektyPARO_5358953113614861487.csv")
+df = pd.read_csv("data/ProjektyPARO_5358953113614861487.csv")
 
 # extract the url list
 url_list = df["properties.detail"]
 
-# call the save function as well as the extract function
 save_to_csv(extract_assesment_of_feasibility(url_list))
