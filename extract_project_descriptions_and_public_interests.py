@@ -7,6 +7,7 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 
+DELAY = 1
 
 def extract_project_description_and_public_interest(url_df):
     """Extract project description and public interest from the PARO xml"""
@@ -29,8 +30,8 @@ def extract_project_description_and_public_interest(url_df):
         #extract the project description from xml and save to the list
         project_description = soup.find("div", class_="project-description").text
         #remove the titles "Hlasovací video" and "Realizační video" from the description
-        project_description = re.sub('Hlasovací video', '', project_description)
-        project_description = re.sub('Realizační video', '', project_description)
+        project_description = re.sub('(Hlasovací|Realizační) video', '', project_description)
+        project_description = re.sub(' video', '', project_description)
         #remove leading and trailing whitespaces
         project_description = project_description.strip()
         list_of_project_descriptions.append(project_description)
@@ -44,7 +45,6 @@ def extract_project_description_and_public_interest(url_df):
         list_of_public_interest.append(project_public_interest)
 
         #delay in seconds so we dont get blocked by the site
-        DELAY = 1
         time.sleep(DELAY)
 
     return list_of_project_ids, list_of_project_descriptions, list_of_public_interest
@@ -73,4 +73,5 @@ if __name__ == '__main__':
     #call the extract function
     id_description_interest = extract_project_description_and_public_interest(url_list)
 
-    save_to_csv(id_description_interest[0], id_description_interest[1], id_description_interest[2], 'descriptions_and_interests.csv')
+    save_to_csv(id_description_interest[0], id_description_interest[1], id_description_interest[2], 
+                'descriptions_and_interests.csv')
