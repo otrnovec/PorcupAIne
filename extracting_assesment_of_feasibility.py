@@ -66,11 +66,11 @@ def save_to_csv(list_of_lists):
     # save the dataframe to a csv file
     output_df.to_csv("assesment_of_feasibility.csv", sep=",", encoding="utf-8")
 
+if __name__ == '__main__':
+    # convert csv to df
+    df = pd.read_csv("data/ProjektyPARO_5358953113614861487.csv")
 
-# convert csv to df
-df = pd.read_csv("data/ProjektyPARO_5358953113614861487.csv")
+    # extract the url list
+    url_list = df["properties.detail"]
 
-# extract the url list
-url_list = df["properties.detail"]
-
-save_to_csv(extract_assesment_of_feasibility(url_list))
+    save_to_csv(extract_assesment_of_feasibility(url_list))
