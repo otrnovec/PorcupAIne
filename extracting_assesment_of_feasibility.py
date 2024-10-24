@@ -5,6 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 
+DEFAULT_TIMEOUT = 5
 
 def extract_assesment_of_feasibility(url_df):
     """Function to extract assesment of feasibility from the xml."""
@@ -19,7 +20,7 @@ def extract_assesment_of_feasibility(url_df):
         assesment_list = [project_id]
 
         # get the url content
-        url = requests.get(url, timeout=5)
+        url = requests.get(url, DEFAULT_TIMEOUT)
         soup = BeautifulSoup(url.content, "html.parser")
 
         # extract the assement from xml and save to the list
@@ -59,7 +60,7 @@ def save_to_csv(list_of_lists):
     """Function to save the assesments to a csv file."""
     # convert lists to dataframe
     output_df = pd.DataFrame(
-        list_of_lists, columns=["ID", "Subjekt", "Odůvodnění", "Závěr"]
+        list_of_lists, columns=["ID", "Subject", "Reasoning", "Conclusion"]
     )
 
     # save the dataframe to a csv file
