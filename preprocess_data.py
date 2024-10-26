@@ -1,7 +1,7 @@
-import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from pathlib import Path
 
 # where the dataset comes from
 # https://data.brno.cz/search?collection=dataset&q=participativn%C3%AD%20rozpo%C4%8Det
@@ -109,4 +109,4 @@ plt.show()
 
 print(df.info())
 
-df.to_csv("data/paro_preprocessed.csv", sep=";", encoding="utf-8")
+df.to_csv(Path(__file__).parent / "data" / "paro_preprocessed.csv")
