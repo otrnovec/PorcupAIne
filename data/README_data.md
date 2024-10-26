@@ -9,3 +9,8 @@ paro_original: original dataset downloaded from data.brno.cz webpage
 
 paro_preprocessed: preprocessed original dataset joint with descriptions and interests
 
+lemmatized_df: is not complete, does not work
+
+lemmatized_df_small: only first small portion of lemmatized data
+
+
