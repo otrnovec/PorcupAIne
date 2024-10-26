@@ -76,7 +76,7 @@ def get_lemmatized_df(dataframe: pd.DataFrame) -> None:
     #     get_lemmatized_column(dataframe["project_description"][slice_value // 2:slice_value])
     # print("2a done")
     # lemmatized_df.to_csv(Path(__file__).parent / "data" / "lemmatized_df.csv")
-    # TODO correct the code so that it really concates together
+    # TODO correct the code so that it really concatenates together
     lemmatized_df["project_description"] = pd.concat([
         lemmatized_df["project_description"],
         get_lemmatized_column(dataframe["project_description"][slice_value:350])
