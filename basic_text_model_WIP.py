@@ -1,6 +1,6 @@
 import pandas as pd
 from sklearn.pipeline import Pipeline
-from sklearn.feature_extraction.text import CountVectorizer     # CountVectorizer accepts only one string column
+from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report
@@ -33,8 +33,8 @@ def load_and_split_data() -> tuple:
 
     df_train, df_val = lemmatized_df[:65], lemmatized_df[65:]
 
+    # text columns are joint together because CountVectorizer accepts only one string column
     cols = ["project_name", "project_description", "public_interest"]
-
     X_train = df_train[cols].apply(
         lambda row: '_'.join(row.values.astype(str)), axis=1)
     X_train = X_train.apply(remove_stop_words)
