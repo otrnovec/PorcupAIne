@@ -7,10 +7,9 @@ from bs4 import BeautifulSoup
 import pandas as pd
 
 
-def extract_project_description_and_public_interest(url_df):
+def extract_project_description_and_public_interest(url_df: list[str]):
     """Function to extract project description and public interest from the xml."""
 
-    #initialize lists
     list_of_project_ids = []
     list_of_project_descriptions = []
     list_of_public_interest = []
@@ -18,7 +17,7 @@ def extract_project_description_and_public_interest(url_df):
     #loop through the urls in the csv
     for url in url_df:
         #get project_id from url and save to the list
-        project_id = url.split("id=",1)[1]
+        project_id = url.split("id=", 1)[1]
         list_of_project_ids.append(project_id)
 
         #get the url content
@@ -30,7 +29,6 @@ def extract_project_description_and_public_interest(url_df):
         #remove the titles "Hlasovací video" and "Realizační video" from the description
         project_description = re.sub('Hlasovací video', '', project_description)
         project_description = re.sub('Realizační video', '', project_description)
-        #remove leading and trailing whitespaces
         project_description = project_description.strip()
         list_of_project_descriptions.append(project_description)
 
@@ -42,8 +40,6 @@ def extract_project_description_and_public_interest(url_df):
         project_public_interest = project_public_interest.strip()
         list_of_public_interest.append(project_public_interest)
 
-        #delay in seconds so we dont get blocked by the site
-        DELAY = 1
         time.sleep(DELAY)
 
     return list_of_project_ids, list_of_project_descriptions, list_of_public_interest

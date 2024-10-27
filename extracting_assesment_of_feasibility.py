@@ -7,7 +7,7 @@ import pandas as pd
 
 DEFAULT_TIMEOUT = 5
 
-def extract_assesment_of_feasibility(url_df):
+def extract_assesment_of_feasibility(url_df: list[str]):
     """Function to extract assesment of feasibility from the xml."""
 
     # initialize lists
@@ -48,15 +48,13 @@ def extract_assesment_of_feasibility(url_df):
                     count = 0
         # if the assesment is missing, save "missing assesment of feasibility"
         else:
-            assesment_list.append("missing assesment of feasibility")
-            assesment_list.append("missing assesment of feasibility")
-            assesment_list.append("missing assesment of feasibility")
+            assesment_list.extend(["missing assesment of feasibility"] * 3)
             list_of_lists.append(assesment_list)
 
     return list_of_lists
 
 
-def save_to_csv(list_of_lists):
+def save_to_csv(list_of_lists, output_path):
     """Function to save the assesments to a csv file."""
     # convert lists to dataframe
     output_df = pd.DataFrame(
@@ -64,7 +62,7 @@ def save_to_csv(list_of_lists):
     )
 
     # save the dataframe to a csv file
-    output_df.to_csv("assesment_of_feasibility.csv", sep=",", encoding="utf-8")
+    output_df.to_csv(output_path, sep=",", encoding="utf-8")
 
 if __name__ == '__main__':
     # convert csv to df
@@ -73,4 +71,4 @@ if __name__ == '__main__':
     # extract the url list
     url_list = df["properties.detail"]
 
-    save_to_csv(extract_assesment_of_feasibility(url_list))
+    save_to_csv(extract_assesment_of_feasibility(url_list), "data/assesment_of_feasibility.csv")
