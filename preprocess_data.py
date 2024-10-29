@@ -77,7 +77,6 @@ if __name__ == "__main__":
     # proveditelný         74   - 2024 proveditelný
     # realizovaný          52   - proveditelný + lidi chtěli                                > winning
     # v realizaci          25   - proveditelný + lidi chtěli                                > winning
-
     df["status"].replace({
         "nevítězný": "feasible",
         "neproveditelný": "unfeasible",

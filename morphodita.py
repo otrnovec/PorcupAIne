@@ -57,8 +57,10 @@ def get_lemmas(tagger_file, texts):
 
 
 if __name__ == "__main__":
-    # Define your tagger file path (from https://lindat.mff.cuni.cz/repository/xmlui/handle/11234/1-4794) 
-    # and list of texts
+    # Define your tagger file path:
+    # download from https://lindat.mff.cuni.cz/repository/xmlui/handle/11234/1-4794,
+    # then place somewhere and then copy the path into @tager_file variable
+    # and define your list of texts
     tagger_file = "czech-morfflex2.0-pdtc1.0-220710/czech-morfflex2.0-pdtc1.0-220710.tagger"
     texts = [
         "Byl jsem včera na návštěvě u babičky. A ta návštěva byla hrozná.",
