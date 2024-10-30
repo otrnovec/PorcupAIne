@@ -12,9 +12,9 @@ def combine_chances(textual_chance: float, numerical_chance: float):
     min_value = min(textual_chance, numerical_chance)
 
     # Display results
-    print(f"Average Value: {average_value:.2f}%")
-    print(f"Median Value: {median_value:.2f}%")
-    print(f"Maximum Value: {max_value:.2f}%")
-    print(f"Minimum Value: {min_value:.2f}%")
+    print(f"Šance na úspěch: {average_value:.2f}%")
+    print(f"Šance na úspěch: {median_value:.2f}%")
+    print(f"Šance na úspěch: {max_value:.2f}%")
+    print(f"Šance na úspěch: {min_value:.2f}%")
 
 combine_chances(textual_chance, numerical_chance)
