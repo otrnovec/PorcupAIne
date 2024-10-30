@@ -17,4 +17,8 @@ def combine_chances(textual_chance: float, numerical_chance: float):
     print(f"Šance na úspěch: {max_value:.2f}%")
     print(f"Šance na úspěch: {min_value:.2f}%")
 
+
+textual_chance = 
+numerical_chance = 
+
 combine_chances(textual_chance, numerical_chance)
