@@ -1,24 +1,28 @@
-def combine_chances(textual_chance: float, numerical_chance: float):
-    # 1. Combine the two numbers into an average value
-    average_value = (textual_chance + numerical_chance) / 2
+from statistics import median
 
-    # 2. Display the median of the two values
-    median_value = sorted([textual_chance, numerical_chance])[1]  # Since there are only two values, the second one is the median
+def combine_chances(*chances: float):
 
-    # 3. Show the maximum value
-    max_value = max(textual_chance, numerical_chance)
+    average_value = sum(chances) / len(chances)
+    median_value = median(chances)
+    max_value = max(chances)
+    min_value = min(chances)
 
-    # 4. Show the minimum value
-    min_value = min(textual_chance, numerical_chance)
+    return average_value, median_value, max_value, min_value
 
-    # Display results
+
+def return_chances(combinations):
+
+    average_value, median_value, max_value, min_value = combinations
+
     print(f"Šance na úspěch: {average_value:.2f}%")
     print(f"Šance na úspěch: {median_value:.2f}%")
     print(f"Šance na úspěch: {max_value:.2f}%")
     print(f"Šance na úspěch: {min_value:.2f}%")
 
 
-textual_chance = 
-numerical_chance = 
 
-combine_chances(textual_chance, numerical_chance)
+# Get results from combine_chances function and store them in 'combinations'
+combinations = combine_chances(*chances)
+
+# Return the results using return_chances function
+return_chances(combinations)
