@@ -7,22 +7,20 @@ def combine_chances(*chances: float):
     max_value = max(chances)
     min_value = min(chances)
 
-    return average_value, median_value, max_value, min_value
+    return {"Average": average_value, "Median": median_value, "Maximum": max_value, "Minimum": min_value}
 
 
-def return_chances(combinations):
+def print_chances(comb: list[float]): 
 
-    average_value, median_value, max_value, min_value = combinations
-
-    print(f"Šance na úspěch: {average_value:.2f}%")
+    print(f"Šance na úspěch: {comb ['Average']:.2f}%")
     print(f"Šance na úspěch: {median_value:.2f}%")
     print(f"Šance na úspěch: {max_value:.2f}%")
     print(f"Šance na úspěch: {min_value:.2f}%")
 
 
+if __name__ == "__main__":
+    # Get results from combine_chances function and store them in 'combinations'
+    combinations = combine_chances(0.5,0.9,0.4)
 
-# Get results from combine_chances function and store them in 'combinations'
-combinations = combine_chances(*chances)
-
-# Return the results using return_chances function
-return_chances(combinations)
+    # Return the results using return_chances function
+    print_chances(combinations)
