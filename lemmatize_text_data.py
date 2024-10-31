@@ -5,7 +5,7 @@ import pandas as pd
 from morphodita import get_lemmas
 
 
-def get_lemmatized_df(dataframe: pd.DataFrame, tagger_file):
+def create_lemmatized_df(dataframe: pd.DataFrame, tagger_file):
     """Get lemmatized text data from the dataframe."""
 
     name_lemmatized = get_lemmas(tagger_file, dataframe["project_name"].tolist())
@@ -40,4 +40,4 @@ if __name__ == "__main__":
     tagger_file = os.path.join(MODEL_DIR, "czech-morfflex2.0-pdtc1.0-220710.tagger")
     df = pd.read_csv(DATA_DIR / "paro_preprocessed.csv")
 
-    get_lemmatized_df(df, tagger_file)
+    create_lemmatized_df(df, tagger_file)
