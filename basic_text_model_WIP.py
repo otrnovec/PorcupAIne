@@ -27,10 +27,10 @@ def balance_dataset(dataset: pd.DataFrame) -> pd.DataFrame:
     """
     Balance the dataset by randomly under-sampling class 1 to ensure each class has an equal amount of data.
     """
-    only_1 = dataset[dataset["status"] == "1"]
-    sample_size = len(dataset[dataset["status"] == "0"])
+    only_1 = dataset[dataset["status"] == 1]
+    sample_size = len(dataset[dataset["status"] == 0])
     random_same_length_only_1 = only_1.sample(n=sample_size)
-    return pd.concat([random_same_length_only_1, dataset[dataset["status"] == "0"]])
+    return pd.concat([random_same_length_only_1, dataset[dataset["status"] == 0]])
 
 
 def join_text_columns(dataset: pd.DataFrame, cols: list[str], separator="_") -> pd.Series:
@@ -44,7 +44,6 @@ def join_text_columns(dataset: pd.DataFrame, cols: list[str], separator="_") -> 
 def load_and_prepare_data() -> tuple[pd.Series, pd.Series, pd.Series, pd.Series]:
     lemmatized_df = pd.read_csv(DATA_DIR / "lemmatized_dataset.csv")
     preprocess_df = pd.read_csv(DATA_DIR / "paro_preprocessed.csv", usecols=["year"])
-
     lemmatized_df["project_name"] = lemmatized_df["project_name"].astype("string")
     lemmatized_df["project_description"] = lemmatized_df["project_description"].astype("string")
     lemmatized_df["public_interest"] = lemmatized_df["public_interest"].astype("string")
@@ -52,9 +51,6 @@ def load_and_prepare_data() -> tuple[pd.Series, pd.Series, pd.Series, pd.Series]
 
     df_train, df_val, _ = split_train_val_test(lemmatized_df)
     df_train = balance_dataset(df_train)
-
-    df_train["status"] = df_train["status"].astype("int")
-    df_val["status"] = df_val["status"].astype("int")
 
     cols = ["project_name", "project_description", "public_interest"]
     X_train = join_text_columns(df_train, cols=cols).apply(remove_stop_words)
@@ -69,7 +65,8 @@ def load_and_prepare_data() -> tuple[pd.Series, pd.Series, pd.Series, pd.Series]
 if __name__ == "__main__":
     np.random.seed(42)
     X_train, y_train, X_val, y_val = load_and_prepare_data()
-
+    print("TR", X_train[:40])
+    print("YY", y_train[:40])
     pipeline = Pipeline([
             ('vectorizer', CountVectorizer()),
             ('classifier', LogisticRegression(max_iter=100, random_state=42)),
