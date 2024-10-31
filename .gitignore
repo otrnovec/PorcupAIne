@@ -2,3 +2,4 @@
 *.pyc
 __pycache__
 czech-morfflex2.0-pdtc1.0-220710
+data/embedded_dataset.csv
