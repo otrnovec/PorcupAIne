@@ -78,7 +78,7 @@ if __name__ == "__main__":
     threshold = 0.5
     # you can see directly the predicted probabilities for each class
     predicted_proba = pipeline.predict_proba(X_val)
-    # print("proba", predicted_proba[:50])
+    print("proba", predicted_proba[:50])
 
     y_pred = [0 if proba[0] >= threshold else 1 for proba in predicted_proba]
 
