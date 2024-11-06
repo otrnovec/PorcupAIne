@@ -1,14 +1,16 @@
 import pandas as pd
 import os
+import ast
 from matplotlib import pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.feature_selection import SelectKBest
 from sklearn.metrics import classification_report, ConfusionMatrixDisplay
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
+
 from preprocess_data import split_train_val_test
 from settings import *
 from basic_text_model import balance_dataset
-import ast
 
 
 def process_embeddings(df: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
@@ -23,7 +25,6 @@ def process_embeddings(df: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
              are removed from the resulting DataFrame.
 
     Example:
-    --------
     If the input DataFrame `df` has a column 'project_name' with the following values:
 
     | project_name             | other_column |
@@ -39,9 +40,7 @@ def process_embeddings(df: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
     | 0.4            | 0.5            | 0.6            | "B"          |
     """
     for col in cols:
-
         df.loc[:, col] = df[col].apply(lambda x: ast.literal_eval(x))
-
         col_expanded = pd.DataFrame(df[col].tolist(), index=df.index)
         col_expanded.columns = [f"{col}_{i}" for i in range(col_expanded.shape[1])]
         df = pd.concat([df.drop(columns=[col]), col_expanded], axis=1)
@@ -62,8 +61,10 @@ if __name__ == "__main__":
     X_val = process_embeddings(df_val[cols], cols)
     y_val = df_val["status"]
 
+    # print(len(X_val.columns))     #
     pipeline = Pipeline([
             ('scaler', StandardScaler()),
+            ('skb', SelectKBest(k=100)),
             ('classifier', RandomForestClassifier(max_depth=4, n_estimators=30, random_state=42))
     ])
     pipeline.fit(X_train, y_train)
