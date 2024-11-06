@@ -92,9 +92,8 @@ if __name__ == "__main__":
 
     df_train, df_val, df_test = split_train_val_test(df)
 
-    print(df_train["status"].value_counts())
-    print(df_val["status"].value_counts())
-    print(type(df_test["status"].value_counts()))
+    print("train status value counts", df_train["status"].value_counts())
+    print("val status value counts", df_val["status"].value_counts())
 
     # ax = df["year"].value_counts().sort_values(ascending=False).plot.bar()
     # plt.title("How many projects was submitted each year")

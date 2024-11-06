@@ -6,7 +6,6 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, ConfusionMatrixDisplay
 from preprocess_data import split_train_val_test
 import matplotlib.pyplot as plt
-import numpy as np
 from settings import *
 
 
@@ -51,6 +50,9 @@ def load_and_prepare_data() -> tuple[pd.Series, pd.Series, pd.Series, pd.Series]
 
     df_train, df_val, _ = split_train_val_test(lemmatized_df)
     df_train = balance_dataset(df_train)
+    # print(df_train.info())
+    # print("number of train data points with status=1", len(df_train[df_train["status"] == 1]))
+    # print("number of train data points with status=0", len(df_train[df_train["status"] == 0]))
 
     cols = ["project_name", "project_description", "public_interest"]
     X_train = join_text_columns(df_train, cols=cols).apply(remove_stop_words)
@@ -63,10 +65,7 @@ def load_and_prepare_data() -> tuple[pd.Series, pd.Series, pd.Series, pd.Series]
 
 
 if __name__ == "__main__":
-    np.random.seed(42)
     X_train, y_train, X_val, y_val = load_and_prepare_data()
-    print("TR", X_train[:40])
-    print("YY", y_train[:40])
     pipeline = Pipeline([
             ('vectorizer', CountVectorizer()),
             ('classifier', LogisticRegression(max_iter=100, random_state=42)),
@@ -78,10 +77,10 @@ if __name__ == "__main__":
     threshold = 0.5
     # you can see directly the predicted probabilities for each class
     predicted_proba = pipeline.predict_proba(X_val)
-    print("proba", predicted_proba[:50])
+    # print("proba", predicted_proba[:50])
 
     y_pred = [0 if proba[0] >= threshold else 1 for proba in predicted_proba]
 
     print(classification_report(y_val, y_pred))
-    print(ConfusionMatrixDisplay.from_predictions(y_val, y_pred))
+    ConfusionMatrixDisplay.from_predictions(y_val, y_pred)
     plt.show()
