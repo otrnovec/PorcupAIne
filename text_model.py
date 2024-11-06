@@ -3,10 +3,11 @@ import os
 import ast
 from matplotlib import pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import SelectKBest, chi2, f_classif
 from sklearn.metrics import classification_report, ConfusionMatrixDisplay
+from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 from preprocess_data import split_train_val_test
 from settings import *
@@ -47,6 +48,34 @@ def process_embeddings(df: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
     return df
 
 
+def find_best_params(input_data, output_data) -> dict:
+    """
+        Performs a grid search to find the best hyperparameters for a pipeline consisting
+        of MinMaxScaler, SelectKBest, and a RandomForestClassifier.
+        :param input_data: Features for model training.
+        :param output_data: Target variable for model training.
+        :return Best hyperparameters found during the grid search.
+    """
+    pipeline = Pipeline([
+        ('scaler', MinMaxScaler()),
+        ('skb', SelectKBest()),
+        ('classifier', RandomForestClassifier(random_state=42))
+    ])
+    # Parameters of pipelines can be set using '__' separated parameter names:
+    param_grid = {
+        "skb__k": [50, 100, 500, 1000],
+        "skb__score_func": [chi2, f_classif],
+        "classifier__max_depth": [2, 4, 6, 20],
+        "classifier__n_estimators": [20, 50, 100, 200, 500]
+    }
+
+    # n_jobs=-1 means the work is parallelized - all processors are used
+    search = GridSearchCV(pipeline, param_grid, n_jobs=-1)
+
+    search.fit(input_data, output_data)
+    return search.best_params_
+
+
 if __name__ == "__main__":
     embedded_df = pd.read_csv(os.path.join(DATA_DIR, "embedded_dataset.csv"))
     preprocess_df = pd.read_csv(os.path.join(DATA_DIR, "paro_preprocessed.csv"), usecols=["year"])
@@ -61,14 +90,19 @@ if __name__ == "__main__":
     X_val = process_embeddings(df_val[cols], cols)
     y_val = df_val["status"]
 
-    # print(len(X_val.columns))     #
+    # print(len(X_val.columns))     # there are 2304 vectors
+    # print(find_best_params(X_train, y_train))
+
+    # using best params find by GridSearchCV
     pipeline = Pipeline([
-            ('scaler', StandardScaler()),
-            ('skb', SelectKBest(k=100)),
-            ('classifier', RandomForestClassifier(max_depth=4, n_estimators=30, random_state=42))
+            # if we use MinMax instead of Standard scaler there is no problem with negative values while using chi2
+            # however it performs differently (don't know exactly how...), so be careful:)
+            ('scaler', MinMaxScaler()),
+            # ('scaler', StandardScaler()),
+            ('skb', SelectKBest(score_func=chi2, k=500)),
+            ('classifier', RandomForestClassifier(n_estimators=50, max_depth=6, random_state=42))
     ])
     pipeline.fit(X_train, y_train)
-
     y_pred = pipeline.predict(X_val)
 
     print(classification_report(y_val, y_pred))
