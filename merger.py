@@ -15,7 +15,7 @@ def combine_chances(*chances: float):
 
 def print_chances(comb: list[float]):
 
-    # The function acceses the values from combine_chances and prints them
+    # The function accesses the values from combine_chances and prints them
 
     print(f"Šance na úspěch (avg): {comb ['Average']:.2f}%")
     print(f"Šance na úspěch (med): {comb ['Median']:.2f}%")
