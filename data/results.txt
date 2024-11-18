@@ -1,6 +1,0 @@
-embedded_dataset, balanced data: func=chi2, k=500, n_estimators=50,max_depth=6 >> Avgweight+-63 %
-contextual_embeddings, balanced data: func=chi2, k=50, n_estimators=50, max_depth=20 >> Avgweight+-63 %
-non_contextual_embeddings, balanced data: func=f_classif, k=500, n_estimators=200, max_depth=20 >> Avgweight+-60 %
-
-
-
