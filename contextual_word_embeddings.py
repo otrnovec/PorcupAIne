@@ -1,3 +1,7 @@
+""" After getting suspicion that our original word embeddings (first_word_embeddings.py) 
+have issues, I have decided to try both contextual (generally DONT require lemmatization and removal of stop-words) 
+and non-contextual embeddings (Generally require lemmatization and removal of stop-words)."""
+
 import logging
 import os
 from settings import DATA_DIR
@@ -63,17 +67,18 @@ def combine_embeddings(embeddings, method='concatenate', weights=None):
     return combined_embedding
 
 
-def main(input_file, output_file, columns, model_name='ufal/robeczech-base', combine_method='concatenate', weights=None, ):
+def main(input_file, output_file, columns=None, model_name='ufal/robeczech-base', combine_method='concatenate', weights=None ):
     """
     Main function to read input CSV, generate embeddings, and save to output CSV.
 
     Args:
         input_file (str): Path to the input CSV file.
         output_file (str): Path to the output CSV file.
+        columns (list of str, optional): List of columns to process. If None, all columns are used.
         model_name (str): Name of the pre-trained model.
         combine_method (str): Method to combine embeddings ('concatenate', 'average', 'weighted').
         weights (list of float, optional): Weights for weighted sum. Only used if combine_method is 'weighted'.
-        columns (list of str, optional): List of columns to process. If None, all columns are used.
+        
     """
     # Set up logging
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
@@ -144,7 +149,12 @@ def main(input_file, output_file, columns, model_name='ufal/robeczech-base', com
         return
 
 def add_status_to_embedded_dataset(embedded_dataset_file, lemmatized_dataset_file):
-    """Add the 'status' column to the embedded dataset."""
+    """Add the 'status' column to the embedded dataset.
+    Args:
+        embedded_dataset_file (csv): path to the embedded dataset file,
+        lemmatized_dataset_file (csv): path to a dataset with binary status column.
+        
+    """
 
     embedded_df = pd.read_csv(embedded_dataset_file)
 

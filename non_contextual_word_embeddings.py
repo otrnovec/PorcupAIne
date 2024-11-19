@@ -1,3 +1,7 @@
+""" After getting suspicion that our original word embeddings (first_word_embeddings.py) 
+have issues, I have decided to try both contextual (generally DONT require lemmatization and removal of stop-words) 
+and non-contextual embeddings (Generally require lemmatization and removal of stop-words)."""
+
 from settings import DATA_DIR
 import os
 
@@ -108,8 +112,6 @@ if __name__ == '__main__':
     col2 = 'project_description'
     col3 = 'public_interest'
 
-    # Process the dataset and generate embeddings
     process_csv(input_file, output_file, model_path, col1, col2, col3)
 
-    # Add status column to the embedded dataset
     add_status_to_embedded_dataset(output_file, input_file)
