@@ -1,6 +1,33 @@
-embedded_dataset, balanced data: func=chi2, k=500, n_estimators=50,max_depth=6 >> Avgweight+-63 %
-contextual_embeddings, balanced data: func=chi2, k=50, n_estimators=50, max_depth=20 >> Avgweight+-63 %
-non_contextual_embeddings, balanced data: func=f_classif, k=500, n_estimators=200, max_depth=20 >> Avgweight+-60 %
+RandomForest:
+
+embedded_dataset, balanced data: func=chi2, k=500, n_estimators=50,max_depth=6 >> +-63 %
+contextual_embeddings, balanced data: func=chi2, k=50, n_estimators=50, max_depth=20 >> +-63 %
+non_contextual_embeddings, balanced data: func=f_classif, k=500, n_estimators=200, max_depth=20 >> +-60 %
+
+NN:
+nn.Sequential(
+            nn.Linear(input_size, 128),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(128, 32),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(32, 1),
+            nn.Sigmoid()
+        )
+
+non_contextual_embeddings.csv, lr=0.0001, epochs=200 >> predicts only class 1 (65 %)
+contextual_embeddings.csv, lr=0.0001, epochs=200 >> +-63 %
+
+HybridCNNRNN without dropout
+contextual_embeddings.csv, lr=0.0001, epochs=200 >> 43 %
+
+HybridCNNRNN with dropout before the last layer =0.3, rnn_layers=3
+contextual_embeddings.csv, lr=0.0005, epochs=100 >> 49 %
+contextual_embeddings.csv, lr=0.001, epochs=20 >> 52 %
+
+EnhancedLSTM, dropout=0.3
+contextual_embeddings.csv, lr=0.0001, epochs=20 >>  %
 
 
 

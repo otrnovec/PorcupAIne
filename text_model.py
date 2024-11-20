@@ -2,6 +2,7 @@ import re
 import pandas as pd
 import os
 import ast
+import joblib
 from matplotlib import pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_selection import SelectKBest, chi2, f_classif
@@ -9,7 +10,6 @@ from sklearn.metrics import classification_report, ConfusionMatrixDisplay
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
-
 from preprocess_data import split_train_val_test
 from settings import *
 from basic_text_model import balance_dataset
@@ -102,7 +102,7 @@ def get_train_val_data(csv_path: str, balanced=True) -> tuple[pd.DataFrame, pd.D
 
 
 if __name__ == "__main__":
-    path_to_embeddings = os.path.join(DATA_DIR, "non_contextual_embeddings.csv")
+    path_to_embeddings = os.path.join(DATA_DIR, "contextual_embeddings.csv")
     X_train, y_train, X_val, y_val = get_train_val_data(path_to_embeddings, balanced=True)
 
     # print(len(X_val.columns))
@@ -118,7 +118,12 @@ if __name__ == "__main__":
             ('classifier', RandomForestClassifier(n_estimators=200, max_depth=20, random_state=30))
     ])
     pipeline.fit(X_train, y_train)
-    y_pred = pipeline.predict(X_val)
+
+    joblib.dump(pipeline, 'model_pipeline.pkl')     # saves model
+
+    loaded_pipeline = joblib.load('model_pipeline.pkl')
+
+    y_pred = loaded_pipeline.predict(X_val)
 
     print(classification_report(y_val, y_pred))
     ConfusionMatrixDisplay.from_predictions(y_val, y_pred)
