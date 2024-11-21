@@ -2,7 +2,7 @@ import pandas as pd
 import joblib
 
 
-def predict_project_success(file_name, model_path):
+def predict_project_success(file_path, model_path):
     """
     Preprocesses the input data, performs one-hot encoding for categorical columns,
     transforms the 'budget' column, loads a pre-trained model, and predicts the probability
@@ -16,7 +16,7 @@ def predict_project_success(file_name, model_path):
     - predicted_success (float): The predicted probability of success for the new project.
     """
     # 1. Load data from the CSV file
-    data = pd.read_csv(file_name)
+    data = pd.read_csv(file_path)
 
     # 2. Select only relevant columns
     relevant_columns = ["project_category", "district", "budget"]
