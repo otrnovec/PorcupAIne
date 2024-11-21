@@ -117,9 +117,9 @@ if __name__ == "__main__":
             ('skb', SelectKBest(score_func=f_classif, k=500)),
             ('classifier', RandomForestClassifier(n_estimators=200, max_depth=20, random_state=30))
     ])
-    pipeline.fit(X_train, y_train)
+    # pipeline.fit(X_train, y_train)
 
-    joblib.dump(pipeline, 'model_pipeline.pkl')     # saves model
+    # joblib.dump(pipeline, 'model_pipeline.pkl')     # saves model
 
     loaded_pipeline = joblib.load('model_pipeline.pkl')
 
