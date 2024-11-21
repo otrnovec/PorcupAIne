@@ -66,15 +66,34 @@ def predict_project_success(file_path, model_path):
     return prediction[0]  # Return the prediction for the first (and only) project in the data
 
 
+def demo_predict_project_success(project_category, district, budget):
+
+    data = {
+    'project_category': [project_category],
+    'district': [district],
+    'budget': [budget]
+    }
+
+    # Create a DataFrame from the dictionary
+    df = pd.DataFrame(data)
+
+    # Save the DataFrame to a CSV file
+    df.to_csv('data/demo_project.csv', index=False)
+
+    predict_project_success("data/demo_project.csv", "numerical_logistic_regression_model.pkl")
+
+
 # Example usage:
 if __name__ == "__main__":
     # Example file path for the new project data
-    file_path = "data/new_project.csv"
+    # file_path = "data/new_project.csv"
 
     # Path to the saved logistic regression model
-    model_path = 'numerical_logistic_regression_model.pkl'
+    # model_path = 'numerical_logistic_regression_model.pkl'
 
     # Call the function and get the predicted success chance
-    success_chance = predict_project_success(file_path, model_path)
+    # success_chance = predict_project_success(file_path, model_path)
 
-    print(f"The predicted chance of success for the new project is: {success_chance:.2f}")
+    # print(f"The predicted chance of success for the new project is: {success_chance:.2f}")
+
+    print(demo_predict_project_success("Senioři", "Brno - Bohunice", 2500000))

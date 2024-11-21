@@ -1,3 +1,4 @@
+from demo_contextual_word_embeddings import generate_single_instance_embedding, combine_embeddings
 import re
 import pandas as pd
 import os
@@ -100,31 +101,44 @@ def get_train_val_data(csv_path: str, balanced=True) -> tuple[pd.DataFrame, pd.D
 
     return X_train, y_train, X_val, y_val
 
+def demo(project_name, project_description, public_interest, year):
+    loaded_pipeline = joblib.load('model_pipeline.pkl')
+    embedding = generate_single_instance_embedding(project_name, project_description, public_interest)
+    print(type(embedding.reshape(1, -1).shape))
+    y_pred = loaded_pipeline.predict_proba(embedding.reshape(1, -1))
+    print(y_pred)
+
 
 if __name__ == "__main__":
-    path_to_embeddings = os.path.join(DATA_DIR, "contextual_embeddings.csv")
-    X_train, y_train, X_val, y_val = get_train_val_data(path_to_embeddings, balanced=True)
+    # path_to_embeddings = os.path.join(DATA_DIR, "contextual_embeddings.csv")
+    # X_train, y_train, X_val, y_val = get_train_val_data(path_to_embeddings, balanced=True)
 
-    # print(len(X_val.columns))
-    # print(find_best_params(X_train, y_train))
+    # # print(len(X_val.columns))
+    # # print(find_best_params(X_train, y_train))
 
-    # using best params found by GridSearchCV
-    pipeline = Pipeline([
-            # if we use MinMax instead of Standard scaler there is no problem with negative values while using chi2
-            # however it performs differently (don't know exactly how...), so be careful:)
-            ('scaler', MinMaxScaler()),
-            # ('scaler', StandardScaler()),
-            ('skb', SelectKBest(score_func=f_classif, k=500)),
-            ('classifier', RandomForestClassifier(n_estimators=200, max_depth=20, random_state=30))
-    ])
-    # pipeline.fit(X_train, y_train)
+    # # using best params found by GridSearchCV
+    # pipeline = Pipeline([
+    #         # if we use MinMax instead of Standard scaler there is no problem with negative values while using chi2
+    #         # however it performs differently (don't know exactly how...), so be careful:)
+    #         ('scaler', MinMaxScaler()),
+    #         # ('scaler', StandardScaler()),
+    #         ('skb', SelectKBest(score_func=f_classif, k=500)),
+    #         ('classifier', RandomForestClassifier(n_estimators=200, max_depth=20, random_state=30))
+    # ])
+    # # pipeline.fit(X_train, y_train)
 
-    # joblib.dump(pipeline, 'model_pipeline.pkl')     # saves model
+    # # joblib.dump(pipeline, 'model_pipeline.pkl')     # saves model
 
-    loaded_pipeline = joblib.load('model_pipeline.pkl')
+    # loaded_pipeline = joblib.load('model_pipeline.pkl')
 
-    y_pred = loaded_pipeline.predict(X_val)
+    # y_pred = loaded_pipeline.predict_proba(X_val)
+    # print(y_pred)
 
-    print(classification_report(y_val, y_pred))
-    ConfusionMatrixDisplay.from_predictions(y_val, y_pred)
-    plt.show()
+    # # print(classification_report(y_val, y_pred))
+    # # ConfusionMatrixDisplay.from_predictions(y_val, y_pred)
+    # # plt.show()
+
+    demo("Odpočinkové lavičky – Brno-Vinohrady 2", 
+               "Sídlištěm Brno-Vinohrady procházejí dva souběžné dvoupruhové chodníky pro pěší, jejichž povrch byl v minulých letech upravován, ale přesto mají závažný nedostatek - po celé jejich délce téměř schází odpočinkové lavičky pro možnost odpočinku na nich. Stav a vybavenost sídliště Brno-Vinohrady se v uplynulých letech postupně vylepšovaly, Některé jeho nedostatky nejsou vzhledem k poloze vůči městu dost dobře řešitelné nebo jsou značně nákladné (např. napojení cyklostezek na městskou síť nebo parkovací místa), jiné řešení mají, ale nebyla jim věnována žádoucí pozornost. Mezi tyto relativně snadno řešitelné záležitosti patří zejména vybavenost sídliště odpočinkovými lavičkami. Ty jsou na sídlišti sice poměrně hustě rozmístěny, ale bohužel pouze v odpočinkových plochách v parcích, na dětských hřištích apod., ale téměř vůbec ne na dvou hlavních pěších trasách, procházejících sídlištěm. Přitom po těchto chodnících musí projít v podstatě všichni obyvatelé sídliště, jdoucí k lékaři nebo do lékárny, na nákup nebo do jiného zařízení služeb na sídlišti, na úřad či na zastávku MHD apod. Zdravému člověku to nepřijde, ale chodci, mající jakékoli zdravotní potíže, omezující jejich pohyblivost (nemusí jí jenom o problém s nohami, ale i slabší srdce, problém s dechem apod.), v podstatě nemají možnost si (bez odbočení z chodníku do parku nebo na hřiště, tj. mimo směr chůze) na chvíli sednout a odpočinout si před dalším pokračováním ve své chůzi. Doplnění stávajících nových i starých chodníků lavičkami ve všech vhodných místech (mimo profil chodníků, na okraji travnatých ploch) by bylo velmi přívětivým a ohleduplným opatřením vůči všem obyvatelům a návštěvníkům sídliště, nejen vůči seniorům a osobám se zdravotními potížemi. Připojené fotografie dokumentují stav v roce 2021, kdy byl podán první návrh v rámci aktivity Dáme na vás - od té doby k žádné změně k lepšímu nedošlo (v roce 2020 naopak byly lavičky na pěší zóně u parku na Pálavském náměstí odstraněny). Snad je z fotografií zřejmý aktuální stav i možnosti jeho relativně snadného i nenákladného a přitom potřebného řešení.", 
+               "Předpokládanými uživateli projektu mohou být všichni obyvatelé a návštěvnící sídliště, především pak osoby, mající zdravotní potíže, omezující jejich pohyblivost či dosažitelnou pochůzkovou vzdálenost (bez možnosti krátkodobého odpočinku) při potřebných cestách mezi bydlištěm a zařízeními (obecnou vybaveností) na sídlišti.",
+               2021)
