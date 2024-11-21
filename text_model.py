@@ -93,18 +93,18 @@ def get_train_val_data(csv_path: str, balanced=True) -> tuple[pd.DataFrame, pd.D
         X_train = process_embeddings(df_train[cols], cols)
         X_val = process_embeddings(df_val[cols], cols)
     else:
-        X_train = df_train.drop(["status"], axis="columns")
-        X_val = df_val.drop(["status"], axis="columns")
+        X_train = df_train.drop(["status", "year"], axis="columns")
+        X_val = df_val.drop(["status", "year"], axis="columns")
 
     y_train = df_train["status"]
     y_val = df_val["status"]
 
     return X_train, y_train, X_val, y_val
 
-def demo(project_name, project_description, public_interest, year):
+def demo(project_name, project_description, public_interest):
     loaded_pipeline = joblib.load('model_pipeline.pkl')
     embedding = generate_single_instance_embedding(project_name, project_description, public_interest)
-    print(type(embedding.reshape(1, -1).shape))
+    # print(type(embedding.reshape(1, -1).shape))
     y_pred = loaded_pipeline.predict_proba(embedding.reshape(1, -1))
     print(y_pred)
 
