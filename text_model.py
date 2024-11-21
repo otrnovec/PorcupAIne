@@ -1,6 +1,8 @@
+import re
 import pandas as pd
 import os
 import ast
+import joblib
 from matplotlib import pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_selection import SelectKBest, chi2, f_classif
@@ -8,7 +10,6 @@ from sklearn.metrics import classification_report, ConfusionMatrixDisplay
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
-
 from preprocess_data import split_train_val_test
 from settings import *
 from basic_text_model import balance_dataset
@@ -76,34 +77,53 @@ def find_best_params(input_data, output_data) -> dict:
     return search.best_params_
 
 
-if __name__ == "__main__":
-    embedded_df = pd.read_csv(os.path.join(DATA_DIR, "embedded_dataset.csv"))
+def get_train_val_data(csv_path: str, balanced=True) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    embedded_df = pd.read_csv(csv_path)
     preprocess_df = pd.read_csv(os.path.join(DATA_DIR, "paro_preprocessed.csv"), usecols=["year"])
     embedded_df["year"] = preprocess_df["year"]
-    cols = ["project_name", "project_description", "public_interest"]
-
     df_train, df_val, _ = split_train_val_test(embedded_df)
-    df_train = balance_dataset(df_train)
 
-    X_train = process_embeddings(df_train[cols], cols)
+    if balanced:
+        df_train = balance_dataset(df_train)
+
+    # embedded_dataset.csv has different structure and needs a little bit more preprocessing
+    if re.match(r"embedded_dataset\.csv", csv_path):
+        cols = ["project_name", "project_description", "public_interest"]
+        X_train = process_embeddings(df_train[cols], cols)
+        X_val = process_embeddings(df_val[cols], cols)
+    else:
+        X_train = df_train.drop(["status"], axis="columns")
+        X_val = df_val.drop(["status"], axis="columns")
+
     y_train = df_train["status"]
-    X_val = process_embeddings(df_val[cols], cols)
     y_val = df_val["status"]
 
-    # print(len(X_val.columns))     # there are 2304 vectors
+    return X_train, y_train, X_val, y_val
+
+
+if __name__ == "__main__":
+    path_to_embeddings = os.path.join(DATA_DIR, "contextual_embeddings.csv")
+    X_train, y_train, X_val, y_val = get_train_val_data(path_to_embeddings, balanced=True)
+
+    # print(len(X_val.columns))
     # print(find_best_params(X_train, y_train))
 
-    # using best params find by GridSearchCV
+    # using best params found by GridSearchCV
     pipeline = Pipeline([
             # if we use MinMax instead of Standard scaler there is no problem with negative values while using chi2
             # however it performs differently (don't know exactly how...), so be careful:)
             ('scaler', MinMaxScaler()),
             # ('scaler', StandardScaler()),
-            ('skb', SelectKBest(score_func=chi2, k=500)),
-            ('classifier', RandomForestClassifier(n_estimators=50, max_depth=6, random_state=42))
+            ('skb', SelectKBest(score_func=f_classif, k=500)),
+            ('classifier', RandomForestClassifier(n_estimators=200, max_depth=20, random_state=30))
     ])
-    pipeline.fit(X_train, y_train)
-    y_pred = pipeline.predict(X_val)
+    # pipeline.fit(X_train, y_train)
+
+    # joblib.dump(pipeline, 'model_pipeline.pkl')     # saves model
+
+    loaded_pipeline = joblib.load('model_pipeline.pkl')
+
+    y_pred = loaded_pipeline.predict(X_val)
 
     print(classification_report(y_val, y_pred))
     ConfusionMatrixDisplay.from_predictions(y_val, y_pred)
