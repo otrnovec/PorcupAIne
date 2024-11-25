@@ -4,6 +4,7 @@ import torch
 from transformers import AutoModel, AutoTokenizer
 from sklearn.preprocessing import StandardScaler
 
+
 def get_embedding(text, tokenizer, model):
     """
     Generate the embedding for a given text using the specified tokenizer and model.
@@ -31,6 +32,7 @@ def get_embedding(text, tokenizer, model):
     embedding = outputs.last_hidden_state[:, 0, :]
     return embedding.squeeze().numpy()
 
+
 def combine_embeddings(embeddings, method='concatenate', weights=None):
     """
     Combine a list of embeddings into a single embedding vector.
@@ -54,6 +56,7 @@ def combine_embeddings(embeddings, method='concatenate', weights=None):
     else:
         raise ValueError(f"Invalid combination method: {method}")
     return combined_embedding
+
 
 def generate_single_instance_embedding(project_name, project_description, public_interest, model_name='ufal/robeczech-base', combine_method='concatenate', weights=None):
     """
@@ -113,6 +116,7 @@ def generate_single_instance_embedding(project_name, project_description, public
     normalized_embedding = normalized_embedding.squeeze()
 
     return normalized_embedding
+
 
 if __name__ == '__main__':
     # Example inputs

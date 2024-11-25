@@ -1,6 +1,8 @@
 import pandas as pd
 import joblib
 
+from porcupaine.settings import *
+
 
 def predict_project_success(file_path, model_path):
     """
@@ -78,18 +80,18 @@ def demo_predict_project_success(project_category, district, budget):
     df = pd.DataFrame(data)
 
     # Save the DataFrame to a CSV file
-    df.to_csv('data/demo_project.csv', index=False)
+    df.to_csv(DATA_DIR / 'demo_project.csv', index=False)
 
-    predict_project_success("data/demo_project.csv", "numerical_logistic_regression_model.pkl")
+    predict_project_success(DATA_DIR/ "demo_project.csv", MODELS_DIR / "numerical_logistic_regression_model.pkl")
 
 
 # Example usage:
 if __name__ == "__main__":
     # Example file path for the new project data
-    # file_path = "data/new_project.csv"
+    # file_path = DATA_DIR / "new_project.csv"
 
     # Path to the saved logistic regression model
-    # model_path = 'numerical_logistic_regression_model.pkl'
+    # model_path = MODELS_DIR / 'numerical_logistic_regression_model.pkl'
 
     # Call the function and get the predicted success chance
     # success_chance = predict_project_success(file_path, model_path)

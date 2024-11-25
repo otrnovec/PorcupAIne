@@ -13,7 +13,7 @@ def combine_chances(*chances: float):
     return {"Average": average_value, "Median": median_value, "Maximum": max_value, "Minimum": min_value}
 
 
-def print_chances(comb: list[float]):
+def print_chances(comb: dict[str, float]):
 
     # The function accesses the values from combine_chances and prints them
 
@@ -28,5 +28,5 @@ if __name__ == "__main__":
     # Example values in brackets
     combinations = combine_chances(0.5,0.9,0.4,0.99,0.25)
 
-    # Return the results using return_chances function
+    # Print the results using print_chances function
     print_chances(combinations)
