@@ -1,9 +1,9 @@
-from demo_contextual_word_embeddings import generate_single_instance_embedding, combine_embeddings
 import re
 import pandas as pd
 import os
 import ast
 import joblib
+
 from matplotlib import pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_selection import SelectKBest, chi2, f_classif
@@ -11,9 +11,11 @@ from sklearn.metrics import classification_report, ConfusionMatrixDisplay
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
-from preprocess_data import split_train_val_test
-from settings import *
+
+from porcupaine.preprocessing.preprocess_data_original import split_train_val_test
+from porcupaine.settings import *
 from basic_text_model import balance_dataset
+from demo_contextual_word_embeddings import generate_single_instance_embedding, combine_embeddings
 
 
 def process_embeddings(df: pd.DataFrame, cols: list[str]) -> pd.DataFrame:

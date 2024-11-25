@@ -1,6 +1,9 @@
+"""
+Preprocess the original PaRo dataset from here
+        https://data.brno.cz/search?collection=dataset&q=participativn%C3%AD%20rozpo%C4%8Det
+into a paro_preprocess.csv file
+"""
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 from pathlib import Path
 
 
@@ -39,8 +42,8 @@ def change_column_types(dataframe):
 
 if __name__ == "__main__":
     # where the dataset comes from
-    # https://data.brno.cz/search?collection=dataset&q=participativn%C3%AD%20rozpo%C4%8Det
-    df = pd.read_csv("data/PARO_original.csv", sep=";")
+    #
+    df = pd.read_csv("../data/PARO_original.csv", sep=";")
 
     # print(df.head())
     # print(df.info())
@@ -57,7 +60,7 @@ if __name__ == "__main__":
                             })
 
     # merge with descriptions nad interests
-    descriptions_interests_df = pd.read_csv("data/descriptions_and_interests.csv", sep=";")
+    descriptions_interests_df = pd.read_csv("../data/descriptions_and_interests.csv", sep=";")
     descriptions_interests_df = descriptions_interests_df.rename(columns={"project_id": "id"})
     df = pd.merge(df, descriptions_interests_df, on="id")
     df = df.drop(columns=["Unnamed: 0"])
@@ -70,7 +73,7 @@ if __name__ == "__main__":
     df = df[df["status"] != "nerealizovatelný"]
     print(df["status"].value_counts())
 
-    # rename outputs based on this:
+    # rename outputs based on this schema:
     # nevítězný           353   - s podporou, proveditelný, lidi nechtěli                   > feasible
     # neproveditelný      281   - s podporou, neproveditelný, lidi o něm už nehlasují       > unfeasible
     # nezískal podporu    231   - ani se nezjišťovala proveditelnost                        > without support
@@ -85,41 +88,5 @@ if __name__ == "__main__":
         "v realizaci": "winning"
     }, inplace=True
     )
-
-    # ---------------------------------------------------
-
-    print(df.info())
-
-    df_train, df_val, df_test = split_train_val_test(df)
-
-    print("train status value counts", df_train["status"].value_counts())
-    print("val status value counts", df_val["status"].value_counts())
-
-    # ax = df["year"].value_counts().sort_values(ascending=False).plot.bar()
-    # plt.title("How many projects was submitted each year")
-    # plt.xlabel("years")
-    # plt.ylabel("counts")
-    # plt.show()
-    #
-    # ax = df["project_category"].value_counts().sort_values(ascending=False).plot.bar()
-    # plt.title("Distribution of categories")
-    # plt.xlabel("categories")
-    # plt.ylabel("counts")
-    # plt.xticks(rotation=25)
-    # plt.show()
-    #
-    # ax = df[df["status"] == "winning"]["project_category"].value_counts().sort_values(ascending=False).plot.bar()
-    # plt.title("Distribution of categories of winners")
-    # plt.xlabel("categories")
-    # plt.ylabel("counts")
-    # plt.xticks(rotation=25)
-    # plt.show()
-
-    # correlation heatmap
-    sns_plot = sns.heatmap(df.corr(numeric_only=True), cmap="rocket_r")
-    plt.xticks(rotation=15)
-    plt.show()
-
-    print(df.info())
 
     df.to_csv(Path(__file__).parent / "data" / "paro_preprocessed.csv")
