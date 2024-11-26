@@ -4,25 +4,19 @@ import joblib
 from porcupaine.settings import *
 
 
-def predict_project_success(file_path, model_path):
+def predict_project_success(dataframe: pd.DataFrame, model_path):
     """
     Preprocesses the input data, performs one-hot encoding for categorical columns,
     transforms the 'budget' column, loads a pre-trained model, and predicts the probability
     of success for the new project.
 
     Args:
-    - file_name (str): Path to the new project data CSV file.
+    - datafrane (pd.DataFrame): object with new
     - model_path (str): Path to the saved logistic regression model.
 
     Returns:
     - predicted_success (float): The predicted probability of success for the new project.
     """
-    # 1. Load data from the CSV file
-    data = pd.read_csv(file_path)
-
-    # 2. Select only relevant columns
-    relevant_columns = ["project_category", "district", "budget"]
-    data = data[relevant_columns]
 
     # 3. One-Hot Encoding for categorical columns
     def one_hot_encode(data, columns):
@@ -38,7 +32,7 @@ def predict_project_success(file_path, model_path):
         """
         return pd.get_dummies(data, columns=columns, dtype=int)
 
-    data = one_hot_encode(data, ["project_category", "district"])
+    dataframe = one_hot_encode(dataframe, ["category", "district"])
 
     # 4. Transform and scale the "budget" column
     def transform_and_scale_budget(value):
@@ -56,13 +50,13 @@ def predict_project_success(file_path, model_path):
         }
         return scaling_map.get(rounded_value, 1)
 
-    data["budget"] = data["budget"].apply(transform_and_scale_budget)
+    dataframe["budget"] = dataframe["budget"].apply(transform_and_scale_budget)
 
     # 5. Load the pre-trained logistic regression model
     model = joblib.load(model_path)
 
     # 6. Make a prediction using the model
-    prediction = model.predict_proba(data)[:, 1]  # Get the probability of success (class 1)
+    prediction = model.predict_proba(dataframe)[:, 1]  # Get the probability of success (class 1)
 
     # Return the predicted probability of success
     return prediction[0]  # Return the prediction for the first (and only) project in the data
@@ -87,15 +81,14 @@ def demo_predict_project_success(project_category, district, budget):
 
 # Example usage:
 if __name__ == "__main__":
-    # Example file path for the new project data
-    # file_path = DATA_DIR / "new_project.csv"
+    num_inputs = pd.DataFrame({
+        'category': "Senioři",
+        'district': "Brno - Bohunice",
+        'budget': 2500000
+    }, index=[0])
 
-    # Path to the saved logistic regression model
-    # model_path = MODELS_DIR / 'numerical_logistic_regression_model.pkl'
+    model_path = MODELS_DIR / 'numerical_logistic_regression_model.pkl'
 
-    # Call the function and get the predicted success chance
-    # success_chance = predict_project_success(file_path, model_path)
+    success_chance = predict_project_success(num_inputs, model_path)
+    print(f"The predicted chance of success for the new project is: {success_chance:.2f}")
 
-    # print(f"The predicted chance of success for the new project is: {success_chance:.2f}")
-
-    print(demo_predict_project_success("Senioři", "Brno - Bohunice", 2500000))

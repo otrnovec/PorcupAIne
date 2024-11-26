@@ -14,8 +14,8 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 from porcupaine.preprocessing.preprocess_data_original import split_train_val_test
 from porcupaine.settings import *
-from basic_text_model import balance_dataset
-from demo_contextual_word_embeddings import generate_single_instance_embedding
+from porcupaine.textual_model.basic_text_model import balance_dataset
+from porcupaine.textual_model.demo_contextual_word_embeddings import generate_single_instance_embedding
 
 
 def process_embeddings(df: pd.DataFrame, cols: list[str]) -> pd.DataFrame:

@@ -200,7 +200,7 @@ def get_predictions(model: torch.nn.Module, features: pd.DataFrame, threshold:in
 
     Args:
         model (torch.nn.Module): Trained PyTorch model.
-        features (pd.DataFrame): Validation feature set.
+        features (pd.DataFrame): Feature set.
         threshold (int): threshold for probabilites to convert to 0 or 1
 
     Returns:
