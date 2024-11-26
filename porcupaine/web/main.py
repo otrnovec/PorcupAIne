@@ -7,7 +7,7 @@ import uvicorn
 app = FastAPI()
 
 # Specify the templates directory
-templates = Jinja2Templates(directory="FastAPI/templates")
+templates = Jinja2Templates(directory="./templates")
 
 # Route for displaying the form
 @app.get("/", response_class=HTMLResponse)

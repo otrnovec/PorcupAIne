@@ -1,3 +1,8 @@
+"""
+It processes textual data and trains it using basic machine learning models.
+It works only with a lemmatized dataset and employs one-hot encoding.
+"""
+
 import pandas as pd
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import CountVectorizer
@@ -41,6 +46,13 @@ def join_text_columns(dataset: pd.DataFrame, cols: list[str], separator="_") -> 
 
 
 def load_and_prepare_data() -> tuple[pd.Series, pd.Series, pd.Series, pd.Series]:
+    """
+    Loads and prepares the textual data to be used for OneHotEncoding (e. g., with CountVectorizer).
+    Splits the data, joins all features into a single columns and balances the dataset.
+    Features (X_train, X_val) compounds of strings, labels (y_train, y_val) compounds of integers (0 or 1).
+    Returns tuple[pd.Series, pd.Series, pd.Series, pd.Series]: X_train, y_train, X_val, y_val
+    """
+
     lemmatized_df = pd.read_csv(DATA_DIR / "lemmatized_dataset.csv")
     preprocess_df = pd.read_csv(DATA_DIR / "paro_preprocessed.csv", usecols=["year"])
     lemmatized_df["project_name"] = lemmatized_df["project_name"].astype("string")

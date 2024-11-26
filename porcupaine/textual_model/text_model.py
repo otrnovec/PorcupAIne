@@ -15,7 +15,7 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from porcupaine.preprocessing.preprocess_data_original import split_train_val_test
 from porcupaine.settings import *
 from basic_text_model import balance_dataset
-from demo_contextual_word_embeddings import generate_single_instance_embedding, combine_embeddings
+from demo_contextual_word_embeddings import generate_single_instance_embedding
 
 
 def process_embeddings(df: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
@@ -54,7 +54,7 @@ def process_embeddings(df: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
 
 def find_best_params(input_data, output_data) -> dict:
     """
-        Performs a grid search to find the best hyperparameters for a pipeline consisting
+        Performs a grid search to find the best hyper parameters for a pipeline consisting
         of MinMaxScaler, SelectKBest, and a RandomForestClassifier.
         :param input_data: Features for model training.
         :param output_data: Target variable for model training.
@@ -110,8 +110,7 @@ def demo(project_name, project_description, public_interest):
     #not sure if we are getting the right embeddings (all zeros???)
     # print(embedding.reshape(1, -1))
     y_pred = loaded_pipeline.predict_proba(embedding.reshape(1, -1))
-    print(y_pred)
-    # return y_pred
+    return y_pred
 
 
 if __name__ == "__main__":
@@ -142,7 +141,7 @@ if __name__ == "__main__":
     # ConfusionMatrixDisplay.from_predictions(y_val, y_pred)
     # plt.show()
 
-    demo("Odpočinkové lavičky – Brno-Vinohrady 2",
+    print(demo("Odpočinkové lavičky – Brno-Vinohrady 2",
          "Sídlištěm Brno-Vinohrady procházejí dva souběžné dvoupruhové chodníky pro pěší, jejichž povrch byl v minulých letech upravován, ale přesto mají závažný nedostatek - po celé jejich délce téměř schází odpočinkové lavičky pro možnost odpočinku na nich. Stav a vybavenost sídliště Brno-Vinohrady se v uplynulých letech postupně vylepšovaly, Některé jeho nedostatky nejsou vzhledem k poloze vůči městu dost dobře řešitelné nebo jsou značně nákladné (např. napojení cyklostezek na městskou síť nebo parkovací místa), jiné řešení mají, ale nebyla jim věnována žádoucí pozornost. Mezi tyto relativně snadno řešitelné záležitosti patří zejména vybavenost sídliště odpočinkovými lavičkami. Ty jsou na sídlišti sice poměrně hustě rozmístěny, ale bohužel pouze v odpočinkových plochách v parcích, na dětských hřištích apod., ale téměř vůbec ne na dvou hlavních pěších trasách, procházejících sídlištěm. Přitom po těchto chodnících musí projít v podstatě všichni obyvatelé sídliště, jdoucí k lékaři nebo do lékárny, na nákup nebo do jiného zařízení služeb na sídlišti, na úřad či na zastávku MHD apod. Zdravému člověku to nepřijde, ale chodci, mající jakékoli zdravotní potíže, omezující jejich pohyblivost (nemusí jí jenom o problém s nohami, ale i slabší srdce, problém s dechem apod.), v podstatě nemají možnost si (bez odbočení z chodníku do parku nebo na hřiště, tj. mimo směr chůze) na chvíli sednout a odpočinout si před dalším pokračováním ve své chůzi. Doplnění stávajících nových i starých chodníků lavičkami ve všech vhodných místech (mimo profil chodníků, na okraji travnatých ploch) by bylo velmi přívětivým a ohleduplným opatřením vůči všem obyvatelům a návštěvníkům sídliště, nejen vůči seniorům a osobám se zdravotními potížemi. Připojené fotografie dokumentují stav v roce 2021, kdy byl podán první návrh v rámci aktivity Dáme na vás - od té doby k žádné změně k lepšímu nedošlo (v roce 2020 naopak byly lavičky na pěší zóně u parku na Pálavském náměstí odstraněny). Snad je z fotografií zřejmý aktuální stav i možnosti jeho relativně snadného i nenákladného a přitom potřebného řešení.",
          "Předpokládanými uživateli projektu mohou být všichni obyvatelé a návštěvnící sídliště, především pak osoby, mající zdravotní potíže, omezující jejich pohyblivost či dosažitelnou pochůzkovou vzdálenost (bez možnosti krátkodobého odpočinku) při potřebných cestách mezi bydlištěm a zařízeními (obecnou vybaveností) na sídlišti.",
-    )
+    ))
