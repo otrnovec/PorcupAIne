@@ -99,7 +99,7 @@ def print_confusion_matrix(y_val, y_val_pred):
 
 if __name__ == "__main__":
     # 1. Preprocess data without scaling
-    file_path = "data/paro_preprocessed.csv"
+    file_path = DATA_DIR / "paro_preprocessed.csv"
     X_train, y_train, X_val, y_val, X_test, y_test = preprocessing(file_path)
 
     # 2. Train the Logistic Regression model
@@ -115,4 +115,4 @@ if __name__ == "__main__":
     print_confusion_matrix(y_val, y_val_pred)
 
     # 6. Save the trained model to a file
-    save_model(model, MODELS_DIR / 'numerical_logistic_regression_model.pkl')
+    # save_model(model, MODELS_DIR / 'numerical_logistic_regression_model.pkl')
