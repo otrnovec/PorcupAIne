@@ -21,13 +21,13 @@ def compute_porcupaine_score(name: str, description: str, public_interest: str, 
         'budget': budget
     }, index=[0])
     model_path = MODELS_DIR / "numerical_logistic_regression_model.pkl"
-    num_score = predict_project_success(num_inputs, model_path)[1]  # the function returns the tuple of probabilities for each class, we want the proba of the class 1
+    num_score = predict_project_success(num_inputs, model_path)
 
-    text_score = demo(name, description, public_interest)[1]
+    text_score = demo(name, description, public_interest)[0][1]     # the function returns the np.array of probabilities for each class, we want the proba of the class 1
 
     combined_chances = combine_chances(text_score, num_score)
 
-    return combined_chances["average"]
+    return round(combined_chances["average"]*100, 2)
 
 
 def combine_chances(*chances: float):
@@ -39,17 +39,17 @@ def combine_chances(*chances: float):
     max_value = max(chances)
     min_value = min(chances)
 
-    return {"Average": average_value, "Median": median_value, "Maximum": max_value, "Minimum": min_value}
+    return {"average": average_value, "median": median_value, "maximum": max_value, "minimum": min_value}
 
 
 def print_chances(comb: dict[str, float]):
 
     # The function accesses the values from combine_chances and prints them
 
-    print(f"Šance na úspěch (avg): {comb ['Average']:.2f}%")
-    print(f"Šance na úspěch (med): {comb ['Median']:.2f}%")
-    print(f"Šance na úspěch (max): {comb ['Maximum']:.2f}%")
-    print(f"Šance na úspěch (min): {comb ['Minimum']:.2f}%")
+    print(f"Šance na úspěch (avg): {comb ['average']:.2f}%")
+    print(f"Šance na úspěch (med): {comb ['median']:.2f}%")
+    print(f"Šance na úspěch (max): {comb ['maximum']:.2f}%")
+    print(f"Šance na úspěch (min): {comb ['minimum']:.2f}%")
 
 
 if __name__ == "__main__":
