@@ -9,7 +9,7 @@
 </head>
 <body>
     <header>
-        <h1>Výsledky zadaných údajů</h1>
+        <h1>Výsledky zadaných údajů. Čím je PorcupAIne skóre bližší jedničce, tím je větší šance, že získá podporu.</h1>
     </header>
 
     <main>
@@ -22,6 +22,7 @@
                 <li><strong>Okres:</strong> {{ district }}</li>
                 <li><strong>Kategorie:</strong> {{ category }}</li>
                 <li><strong>Rozpočet:</strong> {{ budget }}</li>
+                <li><strong>Výsledek:</strong> {{ pai_score }}</li>
             </ul>
         </section>
         <a href="/" class="btn">Zpět na formulář</a>
