@@ -1,13 +1,17 @@
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles  # Import pro statické soubory
 import uvicorn
 
 # Initialize the FastAPI app
 app = FastAPI()
 
+# Mount static directory
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 # Specify the templates directory
-templates = Jinja2Templates(directory="FastAPI/templates")
+templates = Jinja2Templates(directory="templates")
 
 # Route for displaying the form
 @app.get("/", response_class=HTMLResponse)
@@ -41,4 +45,4 @@ async def submit_form(
 
 # Run the app with Uvicorn
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=8001)
