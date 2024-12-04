@@ -3,6 +3,32 @@ import pandas as pd
 from porcupaine.settings import DATA_DIR
 
 
+def transform_and_scale_budget(value):
+    """
+    Transforms the 'budget' column by rounding it to the nearest million and scaling it
+    according to predefined scaling values.
+
+    Args:
+    - value (float): The budget value to transform.
+
+    Returns:
+    - float: The scaled budget value.
+    """
+    if value < 1000000:
+        rounded_value = 1000000
+    else:
+        rounded_value = round(value, -6)  # Round to the nearest million
+
+    scaling_map = {
+        1000000: 0,
+        2000000: 0.25,
+        3000000: 0.50,
+        4000000: 0.75,
+        5000000: 1
+    }
+    return scaling_map.get(rounded_value, 1)
+
+
 def preprocess_data(file_name):
     """
     Preprocesses the data from a CSV file by selecting relevant columns,
@@ -27,7 +53,7 @@ def preprocess_data(file_name):
     # 3. Transform the "status" column into binary format
     def transform_status(value):
         positive_values = {"feasible", "unfeasible", "winning", "proveditelný"}
-        return 1 if value in positive_values else 0
+        return int(value.lower() in positive_values)
 
     data["status"] = data["status"].apply(transform_status)
 
@@ -62,21 +88,6 @@ def preprocess_data(file_name):
     data = one_hot_encode_with_custom_names(data, ["category", "district"])
 
     # 5. Transform and scale the "budget" column
-    def transform_and_scale_budget(value):
-        if value < 1000000:
-            rounded_value = 1000000
-        else:
-            rounded_value = round(value, -6)  # Round to the nearest million
-
-        scaling_map = {
-            1000000: 0,
-            2000000: 0.25,
-            3000000: 0.50,
-            4000000: 0.75,
-            5000000: 1
-        }
-        return scaling_map.get(rounded_value, 1)
-
     data["budget"] = data["budget"].apply(transform_and_scale_budget)
 
     # 6. Split the data into training, validation, and test sets based on `year`

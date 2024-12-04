@@ -105,6 +105,7 @@ def get_train_val_data(csv_path: Path, balanced=True) -> tuple[pd.DataFrame, pd.
 
 
 def demo(project_name, project_description, public_interest):
+    # TODO rename!!!
     loaded_pipeline = joblib.load(MODELS_DIR / 'model_pipeline.pkl')
     embedding = generate_single_instance_embedding(project_name, project_description, public_interest)
     #not sure if we are getting the right embeddings (all zeros???)

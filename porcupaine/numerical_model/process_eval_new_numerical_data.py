@@ -1,7 +1,7 @@
 import pandas as pd
 import joblib
 from porcupaine.settings import *
-from porcupaine.preprocessing.preprocess_numerical_data import preprocess_data
+from porcupaine.preprocessing.preprocess_numerical_data import preprocess_data, transform_and_scale_budget
 
 
 # Helper function: One-Hot Encoding with Alignment
@@ -24,33 +24,6 @@ def one_hot_encode_with_alignment(data, columns, training_columns):
     # Reindex the columns to match the training columns (add missing columns as 0)
     data = data.reindex(columns=training_columns, fill_value=0)
     return data
-
-
-# Helper function: Transform and Scale the "budget" column
-def transform_and_scale_budget(value):
-    """
-    Transforms the 'budget' column by rounding it to the nearest million and scaling it
-    according to predefined scaling values.
-
-    Args:
-    - value (float): The budget value to transform.
-
-    Returns:
-    - float: The scaled budget value.
-    """
-    if value < 1000000:
-        rounded_value = 1000000
-    else:
-        rounded_value = round(value, -6)  # Round to the nearest million
-
-    scaling_map = {
-        1000000: 0,
-        2000000: 0.25,
-        3000000: 0.50,
-        4000000: 0.75,
-        5000000: 1
-    }
-    return scaling_map.get(rounded_value, 1)
 
 
 # Main function: Predict Project Success
