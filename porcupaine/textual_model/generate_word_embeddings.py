@@ -1,9 +1,11 @@
 import os
+
 import pandas as pd
 from transformers import AutoTokenizer, AutoModel
 import torch
 
-from settings import DATA_DIR
+from porcupaine.settings import *
+
 
 # Load the Czech BERT model and tokenizer
 tokenizer = AutoTokenizer.from_pretrained("ufal/robeczech-base")

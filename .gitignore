@@ -2,9 +2,8 @@
 .ipynb_checkpoints
 *.pyc
 __pycache__
+models
 czech-morfflex2.0-pdtc1.0-220710
-binary_classification_nn.pth
-model_pipeline.pkl
 data/embedded_dataset.csv
 data/embedded_dataset_with_stop_words.csv
 data/contextual_embeddings.csv

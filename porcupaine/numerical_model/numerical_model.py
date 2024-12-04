@@ -1,8 +1,11 @@
-import pandas as pd
+import joblib  # For saving the model
+
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, confusion_matrix
-import joblib  # For saving the model
-from preprocess_numerical_data import preprocess_data  # Preprocessing function
+
+from porcupaine.preprocessing.preprocess_numerical_data import preprocess_data  # Preprocessing function
+from porcupaine.settings import *
+
 
 def preprocessing(file_path):
     """
@@ -18,6 +21,7 @@ def preprocessing(file_path):
     # No scaling here
     return X_train, y_train, X_val, y_val, X_test, y_test
 
+
 def train_logistic_regression(X_train, y_train):
     """
     Trains a logistic regression model on the provided training data.
@@ -31,6 +35,7 @@ def train_logistic_regression(X_train, y_train):
     model.fit(X_train, y_train)
     return model
 
+
 def save_model(model, file_name):
     """
     Saves the trained model to a file.
@@ -40,6 +45,7 @@ def save_model(model, file_name):
     """
     joblib.dump(model, file_name)
     print(f"Model saved to {file_name}")
+
 
 def evaluate_model(model, X_val, y_val):
     """
@@ -67,6 +73,7 @@ def evaluate_model(model, X_val, y_val):
 
     return evaluation_metrics, y_val_pred
 
+
 def print_evaluation_results(evaluation_metrics):
     """
     Prints evaluation results for the validation set.
@@ -78,6 +85,7 @@ def print_evaluation_results(evaluation_metrics):
     for metric, value in evaluation_metrics["validation"].items():
         print(f"{metric.capitalize()}: {value:.2f}")
 
+
 def print_confusion_matrix(y_val, y_val_pred):
     """
     Prints the confusion matrix for the validation set.
@@ -88,9 +96,10 @@ def print_confusion_matrix(y_val, y_val_pred):
     print("\nConfusion Matrix (Validation Set):")
     print(confusion_matrix(y_val, y_val_pred))
 
+
 if __name__ == "__main__":
     # 1. Preprocess data without scaling
-    file_path = "data/paro_preprocessed.csv"
+    file_path = DATA_DIR / "paro_preprocessed.csv"
     X_train, y_train, X_val, y_val, X_test, y_test = preprocessing(file_path)
 
     # 2. Train the Logistic Regression model
@@ -106,4 +115,4 @@ if __name__ == "__main__":
     print_confusion_matrix(y_val, y_val_pred)
 
     # 6. Save the trained model to a file
-    save_model(model, 'numerical_logistic_regression_model.pkl')
+    # save_model(model, MODELS_DIR / 'numerical_logistic_regression_model.pkl')

@@ -1,5 +1,7 @@
 import pandas as pd
 
+from porcupaine.settings import DATA_DIR
+
 
 def preprocess_data(file_name):
     """
@@ -19,6 +21,8 @@ def preprocess_data(file_name):
     # 2. Select only relevant columns
     relevant_columns = ["project_category", "district", "budget", "status", "year"]
     data = data[relevant_columns]
+    data.rename(columns={'project_category': 'category'}, inplace=True)
+    data['district'] = data['district'].replace('Brno - Maloměřice A Obřany', 'Brno - Maloměřice a Obřany')
 
     # 3. Transform the "status" column into binary format
     def transform_status(value):
@@ -27,10 +31,11 @@ def preprocess_data(file_name):
 
     data["status"] = data["status"].apply(transform_status)
 
-    # 4. One-Hot Encoding for categorical columns
-    def one_hot_encode(data, columns):
+    # 4. One-Hot Encoding for categorical columns with custom column naming
+    def one_hot_encode_with_custom_names(data, columns):
         """
-        Performs one-hot encoding on specified categorical columns in the DataFrame.
+        Performs one-hot encoding on specified categorical columns and formats column names
+        as `column_name_value`.
 
         Args:
         - data (pd.DataFrame): The input DataFrame to encode.
@@ -39,9 +44,22 @@ def preprocess_data(file_name):
         Returns:
         - pd.DataFrame: The DataFrame with one-hot encoded columns.
         """
-        return pd.get_dummies(data, columns=columns, dtype=int)
+        for column in columns:
+            # Apply one-hot encoding for the column
+            encoded = pd.get_dummies(data[column], prefix=column, prefix_sep="_", dtype=int)
 
-    data = one_hot_encode(data, ["project_category", "district"])
+            # Rename columns: drop the 'category_' part
+            encoded.columns = [f"{column}_{col.split('_', 1)[-1]}" for col in encoded.columns]
+
+            # Add the encoded columns to the DataFrame
+            data = pd.concat([data, encoded], axis=1)
+
+        # Drop the original categorical columns
+        data = data.drop(columns=columns)
+
+        return data
+
+    data = one_hot_encode_with_custom_names(data, ["category", "district"])
 
     # 5. Transform and scale the "budget" column
     def transform_and_scale_budget(value):
@@ -91,8 +109,12 @@ def preprocess_data(file_name):
 # If this script is being run directly, you can test the function with a sample file
 if __name__ == "__main__":
     # Example usage: Call the preprocess_data function and print the shapes of the datasets
-    X_train, y_train, X_val, y_val, X_test, y_test = preprocess_data("data/paro_preprocessed.csv")
+    X_train, y_train, X_val, y_val, X_test, y_test = preprocess_data(DATA_DIR / "paro_preprocessed.csv")
 
     print(f"Training set: X_train {X_train.shape}, y_train {y_train.shape}")
     print(f"Validation set: X_val {X_val.shape}, y_val {y_val.shape}")
     print(f"Test set: X_test {X_test.shape}, y_test {y_test.shape}")
+
+    # Save the processed training data to an Excel file
+    #X_train.to_excel("processed_training_data.xlsx", index=False)
+    #print("Processed training data saved to 'processed_training_data.xlsx'")

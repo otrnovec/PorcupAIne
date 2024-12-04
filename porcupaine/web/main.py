@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles  # Import pro statické soubory
+from porcupaine.porcupaine_score import compute_porcupaine_score
 import uvicorn
 
 # Initialize the FastAPI app
@@ -29,6 +30,7 @@ async def submit_form(
     category: str = Form(...),
     budget: str = Form(...)
 ):
+    pai_score = compute_porcupaine_score(name, description, public_interest, district, category, budget)
     # Process the form data as needed
     return templates.TemplateResponse(
         "result.html",
@@ -40,6 +42,7 @@ async def submit_form(
             "district": district,
             "category": category,
             "budget": budget,
+            "pai_score": pai_score
         },
     )
 

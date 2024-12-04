@@ -1,6 +1,8 @@
 import os
+
 import numpy as np
 import pandas as pd
+import torch
 import torch.nn as nn
 import torch.optim as optim
 from sklearn.metrics import classification_report, ConfusionMatrixDisplay
@@ -8,7 +10,7 @@ from torch.utils.data import DataLoader, TensorDataset
 from matplotlib import pyplot as plt
 
 from text_model import get_train_val_data
-from settings import *
+from porcupaine.settings import *
 
 
 class BinaryClassificationNN(nn.Module):
@@ -88,10 +90,6 @@ class HybridCNNRNN(nn.Module):
         x = self.sigmoid(x)
 
         return x
-
-
-import torch
-import torch.nn as nn
 
 
 class EnhancedLSTM(nn.Module):
@@ -196,23 +194,22 @@ def weighted_bce_loss(output, target, weight):
     return (bce_loss * weight).mean()
 
 
-def evaluate_model(model: torch.nn.Module, X_val: pd.DataFrame, threshold:int=0.5) -> tuple[np.array, np.array]:
+def get_predictions(model: torch.nn.Module, features: pd.DataFrame, threshold:int=0.5) -> tuple[np.array, np.array]:
     """
-    Evaluates the model on validation data and returns probabilities.
+    Returns predictions for given dataset of features. Suitable for Torch NN models.
 
     Args:
         model (torch.nn.Module): Trained PyTorch model.
-        X_val (pd.DataFrame): Validation feature set.
+        features (pd.DataFrame): Feature set.
         threshold (int): threshold for probabilites to convert to 0 or 1
 
-
     Returns:
-        tuple: Predicted probabilities and binary predictions
+        tuple [np.array, np.array]: Predicted probabilities and binary predictions
     """
     # Set the model to evaluation mode
     model.eval()
 
-    features = torch.tensor(X_val.values, dtype=torch.float32)
+    features = torch.tensor(features.values, dtype=torch.float32)
 
     # Disable gradient computation for evaluation
     with torch.no_grad():
@@ -225,7 +222,7 @@ def evaluate_model(model: torch.nn.Module, X_val: pd.DataFrame, threshold:int=0.
 
 
 if __name__ == "__main__":
-    path_to_embeddings = os.path.join(DATA_DIR, "contextual_embeddings.csv")
+    path_to_embeddings = DATA_DIR / "contextual_embeddings.csv"
     X_train, y_train, X_val, y_val = get_train_val_data(path_to_embeddings, balanced=False)
 
     dataset = prepare_data(X_train, y_train)
@@ -244,7 +241,7 @@ if __name__ == "__main__":
     train_model(model, dataloader, weighted_bce_loss, optimizer, class_weights, num_epochs=20)
 
     model.load_state_dict(torch.load("binary_classification_nn.pth", weights_only=True))
-    probabilities, binary_predictions = evaluate_model(model, X_val)
+    probabilities, binary_predictions = get_predictions(model, X_val)
 
     print(classification_report(y_val, binary_predictions))
     ConfusionMatrixDisplay.from_predictions(y_val, binary_predictions)
