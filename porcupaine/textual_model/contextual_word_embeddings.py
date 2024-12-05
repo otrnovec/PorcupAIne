@@ -9,7 +9,7 @@ import torch
 from sklearn.preprocessing import StandardScaler
 from transformers import AutoModel, AutoTokenizer
 
-from settings import DATA_DIR
+from porcupaine.settings import DATA_DIR
 
 def get_embedding(text, tokenizer, model):
     """

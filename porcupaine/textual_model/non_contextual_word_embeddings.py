@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 from gensim.models import KeyedVectors
 
-from settings import DATA_DIR
+from porcupaine.settings import DATA_DIR
 
 def load_gensim_fasttext_model(model_path):
     """
