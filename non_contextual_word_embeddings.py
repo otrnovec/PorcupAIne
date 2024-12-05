@@ -1,13 +1,13 @@
-""" After getting suspicion that our original word embeddings (first_word_embeddings.py) 
-have issues, I have decided to try both contextual (generally DONT require lemmatization and removal of stop-words) 
-and non-contextual embeddings (Generally require lemmatization and removal of stop-words)."""
+""" generate non-contextual embedings, requires lemmatization and removal of stop-words"""
 
-from settings import DATA_DIR
 import os
 
+import re 
 import pandas as pd
 import numpy as np
 from gensim.models import KeyedVectors
+
+from settings import DATA_DIR
 
 def load_gensim_fasttext_model(model_path):
     """
@@ -32,8 +32,7 @@ def preprocess_text(text):
         str: Cleaned text.
     """
     text = text.lower()
-    text = ' '.join(text.split())
-    return text
+    return re.sub("\s{2,}", " ", text).strip().lower()  
 
 def text_to_embedding(text, model):
     """
@@ -50,17 +49,14 @@ def text_to_embedding(text, model):
     if not embeddings:
         return np.zeros(model.vector_size)  # Return a zero vector if no words are found in the model
     return np.mean(embeddings, axis=0)
-
-def process_csv(input_file, output_file, model_path, col1, col2, col3):
+def process_csv(input_file, output_file, model_path, *columns):
     """
     Read the CSV, convert text to embeddings, and save to a new CSV.
     Args:
         input_file (str): Path to the input CSV file.
         output_file (str): Path to save the output CSV file.
         model_path (str): Path to the pre-trained fastText model.
-        col1 (str): Name of the first text column.
-        col2 (str): Name of the second text column.
-        col3 (str): Name of the third text column.
+        *columns (str): columns used.
     """
     # Load gensim fastText model
     model = load_gensim_fasttext_model(model_path)
@@ -73,7 +69,7 @@ def process_csv(input_file, output_file, model_path, col1, col2, col3):
     # Process each row in the DataFrame
     for _, row in df.iterrows():
         embeddings = []
-        for col in [col1, col2, col3]:
+        for col in columns:
             text = row[col]
             if pd.isnull(text) or not isinstance(text, str) or text.strip() == '':
                 embedding = np.zeros(model.vector_size)

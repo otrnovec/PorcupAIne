@@ -1,11 +1,7 @@
-""" After getting suspicion that our original word embeddings (first_word_embeddings.py) 
-have issues, I have decided to try both contextual (generally DONT require lemmatization and removal of stop-words) 
-and non-contextual embeddings (Generally require lemmatization and removal of stop-words)."""
+""" converts raw text to contextual embedding, no lemmatization or stop-word removal needed"""
 
-import logging
 import os
-from settings import DATA_DIR
-
+import logging
 
 import numpy as np
 import pandas as pd
@@ -13,6 +9,7 @@ import torch
 from sklearn.preprocessing import StandardScaler
 from transformers import AutoModel, AutoTokenizer
 
+from settings import DATA_DIR
 
 def get_embedding(text, tokenizer, model):
     """
@@ -20,11 +17,11 @@ def get_embedding(text, tokenizer, model):
 
     Args:
         text (str): The input text.
-        tokenizer: The tokenizer instance.
-        model: The model instance.
+        tokenizer (str): The tokenizer instance.
+        model (bert-based): The model instance.
 
     Returns:
-        np.ndarray: The embedding vector as a NumPy array.
+        np.ndarray: The embedding vector as a NumPy array, vector of 256 floats in range <0, 1>.
     """
     # Tokenize the input text
     inputs = tokenizer(
@@ -47,7 +44,7 @@ def combine_embeddings(embeddings, method='concatenate', weights=None):
     Combine a list of embeddings into a single embedding vector.
 
     Args:
-        embeddings (list of np.ndarray): List of embedding vectors.
+        embeddings (Optional[list[float]]): List of embedding vectors.
         method (str): Method to combine embeddings ('concatenate', 'average', 'weighted').
         weights (list of float, optional): Weights for weighted sum. Only used if method is 'weighted'.
 
@@ -80,30 +77,28 @@ def main(input_file, output_file, columns=None, model_name='ufal/robeczech-base'
         weights (list of float, optional): Weights for weighted sum. Only used if combine_method is 'weighted'.
         
     """
+    class ModelError(Exception):
+        pass
     # Set up logging
-    logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
-    logging.info('Loading tokenizer and model...')
+    
+    logging.info('Loading tokenizer and model ... ')
 
-    # Load the tokenizer and model
     try:
         tokenizer = AutoTokenizer.from_pretrained(model_name)
         model = AutoModel.from_pretrained(model_name)
-    except Exception as e:
-        logging.error(f"Error loading model '{model_name}': {e}")
-        return
+    except Exception as e:  
+        raise ModelError(f"Failed to load model {model_name}") from e  
 
     try:
         df = pd.read_csv(input_file)
-    except Exception as e:
-        logging.error(f"Error reading input CSV file '{input_file}': {e}")
-        return
+    except Exception as e:  
+        raise ModelError(f"Error reading input CSV file {input_file}") from e  
 
     # Filter the DataFrame to use only the specified columns if provided
     if columns:
         missing_columns = [col for col in columns if col not in df.columns]
         if missing_columns:
-            logging.error(f"Columns not found in the input CSV: {missing_columns}")
-            return
+            raise ModelError(f"Columns not found in the input CSV {missing_columns}")
         df = df[columns]
 
     logging.info(f'Processing {len(df)} rows for columns: {columns if columns else df.columns.tolist()}')
@@ -118,7 +113,7 @@ def main(input_file, output_file, columns=None, model_name='ufal/robeczech-base'
             if pd.isnull(text) or not isinstance(text, str) or text.strip() == '':
                 # Handle missing or empty text by using a zero vector
                 embedding = np.zeros(model.config.hidden_size)
-                logging.debug(f'Row {index}, column "{col}": Empty or invalid text encountered.')
+                logging.warning(f'Row {index}, column "{col}": Empty or invalid text encountered.')
             else:
                 embedding = get_embedding(text, tokenizer, model)
             embeddings.append(embedding)
@@ -134,10 +129,10 @@ def main(input_file, output_file, columns=None, model_name='ufal/robeczech-base'
             return
         combined_embeddings.append(combined_embedding)
 
-    combined_embeddings = np.array(combined_embeddings)
+    combined_embeddings_array = np.array(combined_embeddings)
 
     scaler = StandardScaler()
-    normalized_embeddings = scaler.fit_transform(combined_embeddings)
+    normalized_embeddings = scaler.fit_transform(combined_embeddings_array)
 
     embeddings_df = pd.DataFrame(normalized_embeddings)
 
@@ -151,7 +146,7 @@ def main(input_file, output_file, columns=None, model_name='ufal/robeczech-base'
 def add_status_to_embedded_dataset(embedded_dataset_file, lemmatized_dataset_file):
     """Add the 'status' column to the embedded dataset.
     Args:
-        embedded_dataset_file (csv): path to the embedded dataset file,
+        embedded_dataset_file (str): path to the embedded dataset file,
         lemmatized_dataset_file (csv): path to a dataset with binary status column.
         
     """
@@ -163,12 +158,13 @@ def add_status_to_embedded_dataset(embedded_dataset_file, lemmatized_dataset_fil
     embedded_df["status"] = lemmatized_df["status"]
 
     embedded_df.to_csv(embedded_dataset_file, index=False)
-    print(f"Status added to {embedded_dataset_file}")
+    
 
 
 
 if __name__ == '__main__':
-    # Specify your parameters here
+    logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
+
     input_file = os.path.join(DATA_DIR, "paro_preprocessed.csv")
     output_file = os.path.join(DATA_DIR, "contextual_embeddings.csv")
     model_name = 'ufal/robeczech-base'  
