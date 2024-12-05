@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/static/favicon.jpg" type="image/jpeg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style2.css">
+    <title>Výsledky formuláře</title>
+</head>
+<body>
+    <header>
+        <h1>Výsledky zadaných údajů</h1>
+    </header>
+
+    <main>
+        <section class="result-section">
+            <h2>Formulářová data</h2>
+            <ul>
+                <li><strong>Název:</strong> {{ name }}</li>
+                <li><strong>Popis:</strong> {{ description }}</li>
+                <li><strong>Veřejný zájem:</strong> {{ public_interest }}</li>
+                <li><strong>Okres:</strong> {{ district }}</li>
+                <li><strong>Kategorie:</strong> {{ category }}</li>
+                <li><strong>Rozpočet:</strong> {{ budget }}</li>
+                <li><strong>Výsledek:</strong> {{ pai_score }}</li>
+            </ul>
+        </section>
+        <a href="/" class="btn">Zpět na formulář</a>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 PorcupAIne</p>
+    </footer>
+</body>
+</html>
