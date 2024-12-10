@@ -1,0 +1,23 @@
+{
+    "embeddings": "contextual_embeddings.csv",
+    "custom_parameters": {
+        "cnn_out_channels": 32,
+        "kernel_size": 4,
+        "lstm_hidden_size": 32,
+        "lstm_layers": 4,
+        "dropout_rate": 0.5
+    },
+    "trained_parameters": {
+        "batch_size": 32,
+        "epochs": 3,
+        "lr": 0.01
+    },
+    "results": {
+        "precision_0": 0.3465,
+        "precision_1": 0.0,
+        "recall_0": 1.0,
+        "recall_1": 0.0,
+        "f1_score_all": 0.0,
+        "accuracy_all": 0.3465
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "embeddings": "non_contextual_embeddings.csv",
+    "custom_parameters": {
+        "lstm_hidden_size": 32,
+        "lstm_layers": 1,
+        "dropout_rate": 0
+    },
+    "trained_parameters": {
+        "batch_size": 16,
+        "epochs": 5,
+        "lr": 0.01
+    },
+    "results": {
+        "precision_0": 0.5588,
+        "precision_1": 0.7312,
+        "recall_0": 0.4318,
+        "recall_1": 0.8193,
+        "f1_score_all": 0.7727,
+        "accuracy_all": 0.685
+    }
+}
