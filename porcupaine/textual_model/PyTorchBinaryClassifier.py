@@ -23,7 +23,7 @@ class PyTorchBinaryClassifier(BaseEstimator, ClassifierMixin, ABC, nn.Module):
     A wrapper of PyTorch binary classifier models for GridSearchCV from sklearn.
     Fit method has to be implemented in the child class according to the architecture used.
     """
-    def __init__(self, lr, batch_size, epochs):
+    def __init__(self, lr=0.001, batch_size=32, epochs=5):
         """
         Initialize the PyTorchBinaryClassifier.
         Args:
@@ -44,7 +44,7 @@ class PyTorchBinaryClassifier(BaseEstimator, ClassifierMixin, ABC, nn.Module):
         Args:
             x (torch.Tensor): Input features.
         Returns:
-            torch.Tensor: Model output.
+            torch.Tensor: Output tensor of shape (batch_size, 1) with probabilities.
         """
         pass
 
@@ -52,15 +52,15 @@ class PyTorchBinaryClassifier(BaseEstimator, ClassifierMixin, ABC, nn.Module):
         """
         Train the PyTorch model.
         Args:
-            X (np.ndarray): Training features.
-            y (np.ndarray): Training labels.
+            X (pd.DataFrame): Training features.
+            y (pd.DataFrame): Training labels.
         Returns:
             self: The fitted model.
         """
         optimizer = optim.Adam(self.parameters(), lr=self.lr)
 
-        features = torch.tensor(X, dtype=torch.float32)
-        labels = torch.tensor(y, dtype=torch.float32)
+        features = torch.tensor(X.values, dtype=torch.float32)
+        labels = torch.tensor(y.values, dtype=torch.float32)
         dataset = torch.utils.data.TensorDataset(features, labels)
         dataloader = torch.utils.data.DataLoader(dataset, batch_size=self.batch_size, shuffle=True)
 
@@ -90,13 +90,13 @@ class PyTorchBinaryClassifier(BaseEstimator, ClassifierMixin, ABC, nn.Module):
         """
         Predict binary class labels.
         Args:
-            X (np.ndarray): Input features.
+            X (pd.DataFrame): Input features.
         Returns:
             np.ndarray: Predicted labels.
         """
         self.eval()
         with torch.no_grad():
-            X_tensor = torch.tensor(X, dtype=torch.float32)
+            X_tensor = torch.tensor(X.values, dtype=torch.float32)
             outputs = self.forward(X_tensor)
         return (outputs.numpy() > 0.5).astype(int)
 
@@ -104,13 +104,13 @@ class PyTorchBinaryClassifier(BaseEstimator, ClassifierMixin, ABC, nn.Module):
         """
         Predict probabilities for binary classification.
         Args:
-            X (np.ndarray): Input features.
+            X (pd.DataFrame): Input features.
         Returns:
             np.ndarray: Probabilities for the positive class.
         """
         self.eval()
         with torch.no_grad():
-            X_tensor = torch.tensor(X, dtype=torch.float32)
+            X_tensor = torch.tensor(X.values, dtype=torch.float32)
             outputs = self.forward(X_tensor)
         return outputs.numpy()
 
