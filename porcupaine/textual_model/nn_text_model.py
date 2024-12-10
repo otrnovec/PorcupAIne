@@ -160,7 +160,7 @@ def compute_class_weights(labels):
     return class_weights
 
 
-def train_model(model, dataloader, criterion, optimizer, class_weights, num_epochs=10):
+def train_model(model, dataloader, criterion, optimizer, class_weights, save_path, num_epochs=10):
     """
     Returns: None, but saves the model
     """
@@ -172,9 +172,9 @@ def train_model(model, dataloader, criterion, optimizer, class_weights, num_epoc
 
             # Forward pass
             outputs = model(batch_features).squeeze()
-            # outputs = model(batch_features)
-            # print(batch_labels)
-            # print(outputs)
+            outputs = model(batch_features)
+            print(batch_labels)
+            print(outputs)
             # Dynamically compute weights for the current batch
             batch_class_weights = class_weights[batch_labels.long()]
             loss = criterion(outputs, batch_labels.float(), weight=batch_class_weights)
@@ -186,7 +186,7 @@ def train_model(model, dataloader, criterion, optimizer, class_weights, num_epoc
             epoch_loss += loss.item()
         print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {epoch_loss / len(dataloader):.4f}")
 
-    torch.save(model.state_dict(), "binary_classification_nn.pth")
+    torch.save(model.state_dict(), save_path)
 
 
 def weighted_bce_loss(output, target, weight):
@@ -229,18 +229,18 @@ if __name__ == "__main__":
     dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
 
     input_size = X_train.shape[1]       # number of columns
-    model = BinaryClassificationNN(input_size)
+    # model = BinaryClassificationNN(input_size)
     # model = HybridCNNRNN(rnn_layers=3)
-    # model = EnhancedLSTM(input_size)
+    model = EnhancedLSTM(input_size)
 
     labels_tensor = torch.tensor(y_train.values, dtype=torch.long)
     class_weights = compute_class_weights(labels_tensor)
 
     optimizer = optim.Adam(model.parameters(), lr=0.0001)
+    save_path = MODELS_DIR / "nn_model.pth"
+    train_model(model, dataloader, weighted_bce_loss, optimizer, class_weights, save_path, num_epochs=3)
 
-    train_model(model, dataloader, weighted_bce_loss, optimizer, class_weights, num_epochs=20)
-
-    model.load_state_dict(torch.load("binary_classification_nn.pth", weights_only=True))
+    model.load_state_dict(torch.load(save_path, weights_only=True))
     probabilities, binary_predictions = get_predictions(model, X_val)
 
     print(classification_report(y_val, binary_predictions))
