@@ -10,3 +10,4 @@ data/contextual_embeddings.csv
 data/non_contextual_embeddings.csv
 fasttext_model/cc.cs.300.vec
 
+.env
