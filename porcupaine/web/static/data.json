@@ -9,8 +9,7 @@
     { "value": "zabava", "label": "Zábava" },
     { "value": "zvirata", "label": "Zvířata" },
     { "value": "vzdelani", "label": "Vzdělání" },
-    { "value": "zelen", "label": "Zelen" },
-    { "value": "jiny", "label": "Jiný" }
+    { "value": "zelen", "label": "Zeleň" }
   ],
   "districts": [
     { "value": "brno", "label": "Brno" },

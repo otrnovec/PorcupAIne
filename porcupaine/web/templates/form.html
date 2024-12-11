@@ -8,35 +8,28 @@
 </head>
 <body>
     <h1>Zadejte požadovaná data k projektu participativního rozpočtu</h1>
-    <form action="/submit" method="post">
+    <form action="/submit" method="post"> 
         <label for="name">Název:</label><br>
-        <input type="text" id="name" name="name" maxlength="200"><br><br>
-
+        <input type="text" id="name" name="name" maxlength="200" required><br><br>
+    
         <label for="description">Popis:</label><br>
-        <textarea type="text" id="description" name="description" rows="4" cols="50" maxlength="2000"></textarea><br><br>
-
+        <textarea type="text" id="description" name="description" rows="4" cols="50" maxlength="2000" required></textarea><br><br>
+    
         <label for="public_interest">Veřejný přínos:</label><br>
-        <textarea type="text" id="public_interest" name="public_interest" rows="4" cols="50" maxlength="500"></textarea><br><br>
-
+        <textarea type="text" id="public_interest" name="public_interest" rows="4" cols="50" maxlength="500" required></textarea><br><br>
+    
         <label for="district">Městká část:</label><br>
-        <select id="district" name="district"></select><br><br>
-
-         <!-- Kategorie -->
-         <label for="category">Kategorie:</label><br>
-         <select id="category" name="category" onchange="toggleCustomCategory()"></select><br><br>
- 
-         <!-- Skryté textové pole pro vlastní kategorii -->
-         <div id="customCategoryDiv" style="display: none;">
-             <label for="customCategory">Zadejte vlastní kategorii:</label><br>
-             <input type="text" id="customCategory" name="customCategory">
-         </div>
-         <br>
-
+        <select id="district" name="district" required></select><br><br>
+    
+        <!-- Kategorie -->
+        <label for="category">Kategorie:</label><br>
+        <select id="category" name="category" onchange="toggleCustomCategory()" required></select><br><br>
+    
         <label for="budget">Rozpočet (v Kč vč. DPH):</label><br>
-        <input type="number" id="budget" name="budget" min="0" max="99999999999999999999" step="1"><br><br>
-
+        <input type="number" id="budget" name="budget" min="0" max="99999999999999999999" step="1" required><br><br>
+    
         <input type="submit" value="Odeslat">
-    </form>
+    </form>    
     <script src="/static/script.js"></script>
 </body>
 </html>
