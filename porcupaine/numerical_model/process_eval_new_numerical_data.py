@@ -1,99 +1,79 @@
 import pandas as pd
 import joblib
+from porcupaine.settings import *
+from porcupaine.preprocessing.preprocess_numerical_data import preprocess_data, transform_and_scale_budget
 
 
-def predict_project_success(file_path, model_path):
+# Helper function: One-Hot Encoding with Alignment
+def one_hot_encode_with_alignment(data, columns, training_columns):
     """
-    Preprocesses the input data, performs one-hot encoding for categorical columns,
-    transforms the 'budget' column, loads a pre-trained model, and predicts the probability
-    of success for the new project.
+    Performs one-hot encoding on specified categorical columns and aligns the resulting columns
+    with the columns used during model training.
 
     Args:
-    - file_name (str): Path to the new project data CSV file.
+    - data (pd.DataFrame): The input DataFrame to encode.
+    - columns (list): A list of column names to perform one-hot encoding on.
+    - training_columns (list): The columns that were used during model training.
+
+    Returns:
+    - pd.DataFrame: The DataFrame with one-hot encoded columns, aligned with training columns.
+    """
+    # Apply one-hot encoding
+    data = pd.get_dummies(data, columns=columns, dtype=int)
+
+    # Reindex the columns to match the training columns (add missing columns as 0)
+    data = data.reindex(columns=training_columns, fill_value=0)
+    return data
+
+
+# Main function: Predict Project Success
+def predict_project_success(dataframe: pd.DataFrame, model_path):
+    """
+    Preprocesses the training data to get the columns, performs one-hot encoding for the new categorical columns and
+    aligns it with the training data,transforms the 'budget' column, loads a pre-trained model, and predicts the
+    probability of success for the new project.
+
+    Args:
+    - dataframe (pd.DataFrame): The new data for prediction.
     - model_path (str): Path to the saved logistic regression model.
 
     Returns:
     - predicted_success (float): The predicted probability of success for the new project.
     """
-    # 1. Load data from the CSV file
-    data = pd.read_csv(file_path)
 
-    # 2. Select only relevant columns
-    relevant_columns = ["project_category", "district", "budget"]
-    data = data[relevant_columns]
-
-    # 3. One-Hot Encoding for categorical columns
-    def one_hot_encode(data, columns):
-        """
-        Performs one-hot encoding on specified categorical columns in the DataFrame.
-
-        Args:
-        - data (pd.DataFrame): The input DataFrame to encode.
-        - columns (list): A list of column names to perform one-hot encoding on.
-
-        Returns:
-        - pd.DataFrame: The DataFrame with one-hot encoded columns.
-        """
-        return pd.get_dummies(data, columns=columns, dtype=int)
-
-    data = one_hot_encode(data, ["project_category", "district"])
-
-    # 4. Transform and scale the "budget" column
-    def transform_and_scale_budget(value):
-        if value < 1000000:
-            rounded_value = 1000000
-        else:
-            rounded_value = round(value, -6)  # Round to the nearest million
-
-        scaling_map = {
-            1000000: 0,
-            2000000: 0.25,
-            3000000: 0.50,
-            4000000: 0.75,
-            5000000: 1
-        }
-        return scaling_map.get(rounded_value, 1)
-
-    data["budget"] = data["budget"].apply(transform_and_scale_budget)
-
-    # 5. Load the pre-trained logistic regression model
+    # 4. Load the pre-trained model
     model = joblib.load(model_path)
 
+    # Get training data columns (assuming preprocess_data is already run)
+    X_train, y_train, X_val, y_val, X_test, y_test = preprocess_data(DATA_DIR / "paro_preprocessed.csv")
+
+    # Apply one-hot encoding to the new data (category and district) and align it with the training columns
+    dataframe = one_hot_encode_with_alignment(dataframe, ["category", "district"], X_train.columns)
+
+    # 5. Transform and scale the "budget" column as in training
+    dataframe["budget"] = dataframe["budget"].apply(transform_and_scale_budget)
+
     # 6. Make a prediction using the model
-    prediction = model.predict_proba(data)[:, 1]  # Get the probability of success (class 1)
+    prediction = model.predict_proba(dataframe)[:, 1]  # Get the probability of success (class 1)
 
     # Return the predicted probability of success
     return prediction[0]  # Return the prediction for the first (and only) project in the data
 
 
-def demo_predict_project_success(project_category, district, budget):
-
-    data = {
-    'project_category': [project_category],
-    'district': [district],
-    'budget': [budget]
-    }
-
-    # Create a DataFrame from the dictionary
-    df = pd.DataFrame(data)
-
-    # Save the DataFrame to a CSV file
-    df.to_csv('data/demo_project.csv', index=False)
-
-    predict_project_success("data/demo_project.csv", "numerical_logistic_regression_model.pkl")
-
-
 # Example usage:
 if __name__ == "__main__":
-    # Example file path for the new project data
-    # file_path = "data/new_project.csv"
+    # Prepare the new data for prediction
+    num_inputs = pd.DataFrame({
+        'category': ["Zeleň"],  # Replace with your input values
+        'district': ["Brno"],  # Replace with your input values
+        'budget': [300000]  # Replace with your input values
+    }, index=[0])
 
-    # Path to the saved logistic regression model
-    # model_path = 'numerical_logistic_regression_model.pkl'
+    # Define the path to the trained model
+    model_path = MODELS_DIR / 'numerical_logistic_regression_model.pkl'
 
-    # Call the function and get the predicted success chance
-    # success_chance = predict_project_success(file_path, model_path)
+    # Make the prediction
+    success_chance = predict_project_success(num_inputs, model_path)
 
-    # print(f"The predicted chance of success for the new project is: {success_chance:.2f}")
-
-    print(demo_predict_project_success("Senioři", "Brno - Bohunice", 2500000))
+    # Print the predicted probability of success
+    print(f"The predicted chance of success for the new project is: {success_chance:.2f}")
