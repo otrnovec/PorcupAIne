@@ -18,6 +18,7 @@ from porcupaine.preprocessing.preprocess_data_original import split_train_val_te
 from porcupaine.settings import *
 from porcupaine.textual_model.basic_text_model import balance_dataset
 from porcupaine.textual_model.demo_contextual_word_embeddings import generate_single_instance_embedding
+from porcupaine.textual_model.nn_classes import MultiLSTMBinaryClassifier
 
 
 def process_embeddings(df: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
@@ -106,9 +107,19 @@ def get_train_val_data(csv_path: Path, balanced=True) -> tuple[pd.DataFrame, pd.
     return X_train, y_train, X_val, y_val
 
 
+def train_and_save_the_best_model():
+    path_to_embeddings = DATA_DIR / "contextual_embeddings.csv"
+    X_train, y_train, X_val, y_val = get_train_val_data(path_to_embeddings, balanced=False)
+    model = MultiLSTMBinaryClassifier(X_train.shape[1], batch_size=16, epochs=12, lr=0.001)
+    model.fit(X_train, y_train)
+    joblib.dump(model, MODELS_DIR / 'textual_model.pkl')
+
+# train_and_save_the_best_model()
+
+
 def demo(project_name, project_description, public_interest):
     # TODO rename!!!
-    loaded_pipeline = joblib.load(MODELS_DIR / 'model_pipeline.pkl')
+    loaded_pipeline = joblib.load(MODELS_DIR / 'textual_model.pkl')
     embedding = generate_single_instance_embedding(project_name, project_description, public_interest)
     #not sure if we are getting the right embeddings (all zeros???)
     # print(embedding.reshape(1, -1))
