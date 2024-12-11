@@ -3,7 +3,7 @@ from statistics import median
 import pandas as pd
 
 from porcupaine.settings import *
-from porcupaine.textual_model.text_model import demo
+from porcupaine.textual_model.text_model import predict_text
 from porcupaine.numerical_model.process_eval_new_numerical_data import predict_project_success
 
 
@@ -23,7 +23,7 @@ def compute_porcupaine_score(name: str, description: str, public_interest: str, 
     model_path = MODELS_DIR / "numerical_logistic_regression_model.pkl"
     num_score = predict_project_success(num_inputs, model_path)
 
-    text_score = demo(name, description, public_interest)[0][1]     # the function returns the np.array of probabilities for each class, we want the proba of the class 1
+    text_score = predict_text(name, description, public_interest)[0][1]     # the function returns the np.array of probabilities for each class, we want the proba of the class 1
 
     combined_chances = combine_chances(text_score, num_score)
 
