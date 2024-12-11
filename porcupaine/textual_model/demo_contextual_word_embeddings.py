@@ -87,6 +87,7 @@ def generate_single_instance_embedding(project_name, project_description, public
 
     # Prepare the list of texts
     texts = [project_name, project_description, public_interest]
+
     embeddings = []
 
     # Process each text input
@@ -111,12 +112,12 @@ def generate_single_instance_embedding(project_name, project_description, public
         return None
 
     # Optionally normalize the embedding
-    scaler = StandardScaler()
-    normalized_embedding = scaler.fit_transform(combined_embedding.reshape(1, -1))
-    normalized_embedding = normalized_embedding.squeeze()
+    # scaler = StandardScaler()
+    # normalized_embedding = scaler.fit_transform(combined_embedding.reshape(1, -1))
+    # normalized_embedding = normalized_embedding.squeeze()
 
-    return normalized_embedding
-
+    # return normalized_embedding
+    return combined_embedding
 
 if __name__ == '__main__':
     # Example inputs
