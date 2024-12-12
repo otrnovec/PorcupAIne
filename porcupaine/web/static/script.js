@@ -2,14 +2,6 @@
 function toggleCustomCategory() {
     const categorySelect = document.getElementById('category');
     const customCategoryDiv = document.getElementById('customCategoryDiv');
-    const selectedValue = categorySelect.value;
-
-    // Zobrazit/skryt textové pole
-    if (selectedValue === "jiny") {
-        customCategoryDiv.style.display = "block";
-    } else {
-        customCategoryDiv.style.display = "none";
-    }
 }
 
 // Načítání dat z JSON souboru

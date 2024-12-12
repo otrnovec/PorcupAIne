@@ -10,4 +10,4 @@ porcupaine/data/embedded_dataset_with_stop_words.csv
 porcupaine/data/contextual_embeddings.csv
 porcupaine/data/non_contextual_embeddings.csv
 fasttext_model/cc.cs.300.vec
-
+.env
