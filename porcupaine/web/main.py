@@ -28,7 +28,7 @@ async def submit_form(
     public_interest: str = Form(...),
     district: str = Form(...),
     category: str = Form(...),
-    budget: str = Form(...)
+    budget: int = Form(...)
 ):
     pai_score = compute_porcupaine_score(name, description, public_interest, district, category, budget)
     # Process the form data as needed

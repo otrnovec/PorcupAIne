@@ -11,7 +11,7 @@ if __name__ == "__main__":
     """
 
     data_dict = {}
-    for file_name in os.listdir(RESULTS_DIR):
+    for file_name in RESULTS_DIR.iterdir():
         if file_name.endswith('.json'):
             file_path = os.path.join(RESULTS_DIR, file_name)
 
@@ -22,10 +22,10 @@ if __name__ == "__main__":
     only_the_best = {}
     for model_name, key in data_dict.items():
         if key["f1_score_all"] > 0.65 and key["accuracy_all"] > 0.65\
-                and key["precision_0"] != 0 and key["precision_1"] != 0 and key["recall_0"] != 0 and key["recall_1"] != 0:
+                and key["precision_0"] and key["precision_1"] and key["recall_0"] and key["recall_1"]:
             only_the_best[model_name] = key
 
-    print(len(only_the_best))
+    # TODO replace with dict for prettier code
     precision_0 = [only_the_best[key]["precision_0"] for key in only_the_best]
     precision_1 = [only_the_best[key]["precision_1"] for key in only_the_best]
     recall_0 = [only_the_best[key]["recall_0"] for key in only_the_best]

@@ -37,7 +37,7 @@ class PyTorchBinaryClassifier(BaseEstimator, ClassifierMixin, ABC, nn.Module):
         self.epochs = epochs
         self.classes_ = np.array([0, 1])      # attribute needed for GridSearchCV; TODO replace with not-hard-coded solution
 
-    @abstractmethod         # TODO Is this declaration properly used? I hope so but I am not sure.
+    @abstractmethod
     def forward(self, x):
         """
         Forward pass for the model.
@@ -69,7 +69,6 @@ class PyTorchBinaryClassifier(BaseEstimator, ClassifierMixin, ABC, nn.Module):
 
         for epoch in range(self.epochs):
             self.train()
-            epoch_loss = 0
             for batch_features, batch_labels in dataloader:
                 optimizer.zero_grad()
 
@@ -80,8 +79,6 @@ class PyTorchBinaryClassifier(BaseEstimator, ClassifierMixin, ABC, nn.Module):
 
                 loss.backward()
                 optimizer.step()
-
-                epoch_loss += loss.item()
 
     def predict(self, X):
         """

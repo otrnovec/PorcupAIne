@@ -3,7 +3,7 @@ This file contains various neural network architectures inheriting from PyTorchB
 """
 import torch.nn as nn
 
-from porcupaine.textual_model.PyTorchBinaryClassifier import PyTorchBinaryClassifier
+from porcupaine.textual_model.nn_binary_classifier import PyTorchBinaryClassifier
 
 
 class MultiLayerPerceptronNN(PyTorchBinaryClassifier):
