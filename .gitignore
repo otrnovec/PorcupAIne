@@ -2,11 +2,12 @@
 .ipynb_checkpoints
 *.pyc
 __pycache__
-models
+porcupaine/__pycache__
+porcupaine/data/models
 czech-morfflex2.0-pdtc1.0-220710
-data/embedded_dataset.csv
-data/embedded_dataset_with_stop_words.csv
-data/contextual_embeddings.csv
-data/non_contextual_embeddings.csv
+porcupaine/data/embedded_dataset.csv
+porcupaine/data/embedded_dataset_with_stop_words.csv
+porcupaine/data/contextual_embeddings.csv
+porcupaine/data/non_contextual_embeddings.csv
 fasttext_model/cc.cs.300.vec
 .env

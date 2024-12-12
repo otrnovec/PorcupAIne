@@ -37,7 +37,7 @@ async def submit_form(
     public_interest: str = Form(...),
     district: str = Form(...),
     category: str = Form(...),
-    budget: str = Form(...)
+    budget: int = Form(...)
 ):
     # Nahrazení value za label
     district_label = districts.get(district, "Neznámá oblast")
