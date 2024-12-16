@@ -23,10 +23,9 @@ def compute_porcupaine_score(name: str, description: str, public_interest: str, 
     model_path = MODELS_DIR / "numerical_logistic_regression_model.pkl"
     num_score = predict_project_success(num_inputs, model_path)
 
-    text_score = predict_text(name, description, public_interest)[0][1]     # the function returns the np.array of probabilities for each class, we want the proba of the class 1
+    text_score = predict_text(name, description, public_interest)     # the function returns the np.array of probabilities for each class, we want the proba of the class 1
 
     combined_chances = combine_chances(text_score, num_score)
-
     return round(combined_chances["average"]*100, 2)
 
 

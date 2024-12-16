@@ -90,7 +90,7 @@ class PyTorchBinaryClassifier(BaseEstimator, ClassifierMixin, ABC, nn.Module):
         """
         self.eval()
         with torch.no_grad():
-            X_tensor = torch.tensor(X.values, dtype=torch.float32)
+            X_tensor = torch.tensor(X, dtype=torch.float32)
             outputs = self.forward(X_tensor)
         return (outputs.numpy() > 0.5).astype(int)
 
@@ -104,7 +104,7 @@ class PyTorchBinaryClassifier(BaseEstimator, ClassifierMixin, ABC, nn.Module):
         """
         self.eval()
         with torch.no_grad():
-            X_tensor = torch.tensor(X.values, dtype=torch.float32)
+            X_tensor = torch.tensor(X, dtype=torch.float32)
             outputs = self.forward(X_tensor)
         return outputs.numpy()
 

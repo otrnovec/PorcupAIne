@@ -114,13 +114,19 @@ def train_and_save_the_best_model():
 
 # train_and_save_the_best_model()
 
-def predict_text(project_name, project_description, public_interest):
-    # predicts on new data
-    loaded_pipeline = joblib.load(BASE_DIR / 'model_pipeline.pkl')
+
+def predict_text(project_name: str, project_description: str, public_interest: str) -> float:
+    """
+    For given text data from a project computes a probability of assignment to the class 1
+    Args:
+    Returns (float): a float from 0 to 1, a probability of assignment to the class 1
+
+    """
+    model = joblib.load(MODELS_DIR / 'textual_model.pkl')
     embedding = generate_single_instance_embedding(project_name, project_description, public_interest)
-    # print(embedding)
-    y_pred = loaded_pipeline.predict_proba(embedding.reshape(1, -1))
-    return y_pred
+    y_pred = model.predict_proba(embedding.reshape(1, -1))
+
+    return float(y_pred)
 
 
 if __name__ == "__main__":
